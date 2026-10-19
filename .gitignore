@@ -1,0 +1,32 @@
+# Variables de entorno (nunca con valores reales; FR-021)
+.env
+.env.local
+.env.*.local
+
+# Dependencias de Node.js
+node_modules/
+
+# Artefactos de build
+dist/
+build/
+frontend/dist/
+
+# Registros y archivos temporales
+*.log
+npm-debug.log*
+*.tmp
+*.swp
+
+# Archivos físicos de base de datos (FR-023: no subir archivos de MySQL)
+*.ibd
+*.frm
+*.MYD
+*.MYI
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
