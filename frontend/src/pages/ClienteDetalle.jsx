@@ -1,10 +1,11 @@
 // Detalle y modificación de un cliente (T057, US6; FR-010).
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { pedir } from '../services/api.js';
+import { pedir, listarObjetivos, listarProgresos } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import ClienteForm from '../components/ClienteForm.jsx';
 import CapturaFacial from '../components/CapturaFacial.jsx';
+import AsignarEntrenador from '../components/AsignarEntrenador.jsx';
 
 export default function ClienteDetalle() {
   const { id } = useParams();
@@ -19,6 +20,9 @@ export default function ClienteDetalle() {
   const [rostro, setRostro] = useState(null);
   const [mostrarCaptura, setMostrarCaptura] = useState(false);
   const [enviandoRostro, setEnviandoRostro] = useState(false);
+  // Seguimiento del cliente (US-S3-04): objetivos y progresos en modo
+  // lectura; el registro es exclusivo del entrenador de la carga.
+  const [seguimiento, setSeguimiento] = useState({ objetivos: [], progresos: [] });
 
   const cargar = useCallback(async () => {
     try {
@@ -52,6 +56,28 @@ export default function ClienteDetalle() {
       vivo = false;
     };
   }, [id, puedeModificar]);
+
+  // Carga los objetivos y progresos del cliente en modo lectura (US-S3-04).
+  useEffect(() => {
+    let vivo = true;
+    async function cargarSeguimiento() {
+      try {
+        const [objetivos, progresos] = await Promise.all([
+          listarObjetivos(`?cliente_id=${id}`),
+          listarProgresos(`?cliente_id=${id}`),
+        ]);
+        if (vivo) {
+          setSeguimiento({ objetivos: objetivos.objetivos, progresos: progresos.progresos });
+        }
+      } catch (_e) {
+        // Sin permiso o sin datos: la página no se bloquea por esto.
+      }
+    }
+    cargarSeguimiento();
+    return () => {
+      vivo = false;
+    };
+  }, [id]);
 
   // Envía el descriptor calculado en el navegador al backend (FR-017).
   async function guardarRostro(descriptor) {
@@ -162,6 +188,72 @@ export default function ClienteDetalle() {
           )}
         </section>
       )}
+
+      {/* Asignación de entrenador (US-S3-02): administrador y recepcionista. */}
+      {puedeModificar && <AsignarEntrenador idCliente={id} />}
+
+      {/* Rutinas del cliente (US-S3-03): enlace al módulo filtrado. */}
+      {puedeModificar && (
+        <p style={{ marginTop: '1rem' }}>
+          <Link to={`/rutinas?cliente_id=${id}`}>Ver rutinas de este cliente</Link>
+        </p>
+      )}
+
+      {/* Seguimiento (US-S3-04): objetivos y histórico de progresos en modo
+          lectura; el registro es del entrenador de la carga (RN-19). */}
+      <section style={{ marginTop: '2rem' }}>
+        <h2>Objetivos de entrenamiento</h2>
+        {seguimiento.objetivos.length === 0 ? (
+          <p>Sin objetivos registrados.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Fecha objetivo</th>
+                <th>Cierre</th>
+              </tr>
+            </thead>
+            <tbody>
+              {seguimiento.objetivos.map((objetivo) => (
+                <tr key={objetivo.id_objetivo}>
+                  <td>{objetivo.descripcion}</td>
+                  <td>{objetivo.estado}</td>
+                  <td>{objetivo.fecha_objetivo || '—'}</td>
+                  <td>{objetivo.fecha_cierre || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        <h2>Histórico de progresos</h2>
+        {seguimiento.progresos.length === 0 ? (
+          <p>Sin progresos registrados.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Comentario</th>
+                <th>Peso</th>
+                <th>Cintura</th>
+              </tr>
+            </thead>
+            <tbody>
+              {seguimiento.progresos.map((progreso) => (
+                <tr key={progreso.id_progreso}>
+                  <td>{progreso.fecha}</td>
+                  <td>{progreso.comentario}</td>
+                  <td>{progreso.peso ? `${progreso.peso} kg` : '—'}</td>
+                  <td>{progreso.cintura ? `${progreso.cintura} cm` : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
     </main>
   );
 }

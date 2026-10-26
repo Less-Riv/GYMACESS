@@ -427,7 +427,10 @@ negocio). Las referencias RN-15 a RN-24 de esta especificación apuntan a estas 
   administrador.
 - **FR-021**: La información de entrenamiento DEBE utilizarse únicamente para el seguimiento del
   cliente y el apoyo operativo del gimnasio; no DEBE emplearse para fines distintos a los
-  definidos en el proyecto ni exponerse fuera de los permisos definidos (RN-24).
+  definidos en el proyecto ni exponerse fuera de los permisos definidos (RN-24). Criterio
+  verificable: ningún endpoint ni vista de este sprint devuelve datos de entrenamiento
+  (rutinas, objetivos ni progresos) a un rol no autorizado, comportamiento comprobado por
+  la matriz de permisos de `contracts/` y por las pruebas 403 de cada historia.
 - **FR-022**: El sistema DEBE crear las tablas `entrenadores`, `asignaciones_entrenador`,
   `rutinas`, `ejercicios_rutina`, `objetivos_entrenamiento` y `progresos_clientes` mediante un
   nuevo script de migración numerado en `database/migrations/`, con claves primarias, claves

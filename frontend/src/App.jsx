@@ -12,6 +12,10 @@ import Membresias from './pages/Membresias.jsx';
 import Pagos from './pages/Pagos.jsx';
 import PuntoAcceso from './pages/PuntoAcceso.jsx';
 import Accesos from './pages/Accesos.jsx';
+import Entrenadores from './pages/Entrenadores.jsx';
+import Rutinas from './pages/Rutinas.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Personal from './pages/Personal.jsx';
 
 function Inicio() {
   const { usuario, cerrarSesion } = useAuth();
@@ -30,6 +34,11 @@ function Inicio() {
           {usuario.rol === 'administrador' && (
             <Link to="/tipos-membresia">Tipos de membresía</Link>
           )}
+          {usuario.rol === 'administrador' && <Link to="/entrenadores">Entrenadores</Link>}
+          {usuario.rol === 'administrador' && <Link to="/dashboard">Dashboard</Link>}
+          {(usuario.rol === 'administrador' || usuario.rol === 'recepcionista') && (
+            <Link to="/personal">Personal</Link>
+          )}
           {(usuario.rol === 'administrador' ||
             usuario.rol === 'recepcionista' ||
             usuario.rol === 'entrenador') && (
@@ -45,6 +54,11 @@ function Inicio() {
             usuario.rol === 'recepcionista' ||
             usuario.rol === 'entrenador') && (
             <Link to="/accesos">Accesos</Link>
+          )}
+          {(usuario.rol === 'administrador' ||
+            usuario.rol === 'recepcionista' ||
+            usuario.rol === 'entrenador') && (
+            <Link to="/rutinas">Rutinas</Link>
           )}
           {usuario.rol === 'cliente' && <Link to="/mi-cuenta">Mi cuenta</Link>}
         </nav>
@@ -72,6 +86,38 @@ export default function App() {
         element={
           <RutaProtegida roles={['administrador', 'recepcionista']}>
             <ClienteDetalle />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/rutinas"
+        element={
+          <RutaProtegida roles={['administrador', 'recepcionista', 'entrenador']}>
+            <Rutinas />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <RutaProtegida roles={['administrador']}>
+            <Dashboard />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/personal"
+        element={
+          <RutaProtegida roles={['administrador', 'recepcionista']}>
+            <Personal />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/entrenadores"
+        element={
+          <RutaProtegida roles={['administrador', 'recepcionista']}>
+            <Entrenadores />
           </RutaProtegida>
         }
       />

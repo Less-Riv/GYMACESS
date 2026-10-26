@@ -131,6 +131,13 @@ export async function prepararBasePruebas() {
       'utf8'
     );
     await conexion.query(semillaSprint2);
+
+    // Semilla de datos del Sprint 3 (entrenador y clientes de ejemplo).
+    const semillaSprint3 = await readFile(
+      path.join(RAIZ, 'database', 'seeds', 'seed-datos-sprint3.sql'),
+      'utf8'
+    );
+    await conexion.query(semillaSprint3);
   } catch (error) {
     // Algún archivo impidió recrear la base: no retener el turno.
     await liberarBloqueo();

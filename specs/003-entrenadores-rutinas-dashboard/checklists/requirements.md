@@ -29,7 +29,7 @@
 - [x] Criterios de éxito ajenos a la tecnología
       *SC-012 menciona los scripts versionados porque `docs/reglas.md` (principio IV) exige poder
       reconstruir la base desde cero: es un criterio heredado, no una decisión de diseño.*
-- [x] Definidos todos los escenarios de aceptación (7 historias, de US-S3-01 a US-S3-07, con 41
+- [x] Definidos todos los escenarios de aceptación (7 historias, de US-S3-01 a US-S3-07, con 40
       escenarios de aceptación)
 - [x] Identificados los casos límite (13)
 - [x] Alcance claramente delimitado (sección "Alcance heredado y no reabierto" + FR-029 y FR-030)

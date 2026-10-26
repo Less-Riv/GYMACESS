@@ -79,3 +79,86 @@ export async function pedir(ruta, opciones = {}) {
 
   return datos;
 }
+
+// ---------------------------------------------------------------------------
+// Recursos del Sprint 3 (T002): entrenadores, asignaciones, personal, rutinas,
+// objetivos, progresos, mi-entrenamiento y dashboard. Son envoltorios
+// transparentes sobre `pedir`; las páginas pueden usarlos o llamar a `pedir`
+// directamente con la misma ruta.
+// ---------------------------------------------------------------------------
+
+export function listarEntrenadores() {
+  return pedir('/entrenadores');
+}
+
+export function crearEntrenador(datos) {
+  return pedir('/entrenadores', { metodo: 'POST', cuerpo: datos });
+}
+
+export function modificarEntrenador(id, datos) {
+  return pedir(`/entrenadores/${id}`, { metodo: 'PUT', cuerpo: datos });
+}
+
+export function listarAsignaciones(params = '') {
+  return pedir(`/asignaciones${params}`);
+}
+
+export function asignarEntrenador(datos) {
+  return pedir('/asignaciones', { metodo: 'POST', cuerpo: datos });
+}
+
+export function reasignarEntrenador(id, datos) {
+  return pedir(`/asignaciones/${id}`, { metodo: 'PUT', cuerpo: datos });
+}
+
+export function listarPersonal(params = '') {
+  return pedir(`/personal${params}`);
+}
+
+export function listarMiCarga() {
+  return pedir('/personal/mi-carga');
+}
+
+export function listarRutinas(params = '') {
+  return pedir(`/rutinas${params}`);
+}
+
+export function crearRutina(datos) {
+  return pedir('/rutinas', { metodo: 'POST', cuerpo: datos });
+}
+
+export function modificarRutina(id, datos) {
+  return pedir(`/rutinas/${id}`, { metodo: 'PUT', cuerpo: datos });
+}
+
+export function reemplazarEjercicios(id, ejercicios) {
+  return pedir(`/rutinas/${id}/ejercicios`, { metodo: 'PUT', cuerpo: { ejercicios } });
+}
+
+export function listarObjetivos(params = '') {
+  return pedir(`/objetivos${params}`);
+}
+
+export function crearObjetivo(datos) {
+  return pedir('/objetivos', { metodo: 'POST', cuerpo: datos });
+}
+
+export function modificarObjetivo(id, datos) {
+  return pedir(`/objetivos/${id}`, { metodo: 'PUT', cuerpo: datos });
+}
+
+export function listarProgresos(params = '') {
+  return pedir(`/progresos${params}`);
+}
+
+export function registrarProgreso(datos) {
+  return pedir('/progresos', { metodo: 'POST', cuerpo: datos });
+}
+
+export function obtenerMiEntrenamiento() {
+  return pedir('/mi-entrenamiento');
+}
+
+export function obtenerDashboard(params = '') {
+  return pedir(`/dashboard${params}`);
+}

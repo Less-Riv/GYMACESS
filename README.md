@@ -5,8 +5,9 @@ membresías, pagos, reconocimiento facial y control de acceso.
 Proyecto académico desarrollado con **React** (frontend), **Node.js con Express**
 (backend) y **MySQL local** (base de datos).
 
-> **Estado**: Sprint 2 — membresías, pagos y adeudos, registro e identificación
-> facial y control de acceso (ver `docs/sprint-2.md`).
+> **Estado**: Sprint 3 — entrenadores, asignaciones, rutinas, objetivos y
+> progresos, vista propia del cliente, dashboard administrativo y carga del
+> personal (ver `docs/sprint-3.md`).
 
 ## Estructura del proyecto
 
@@ -47,15 +48,19 @@ Proyecto académico desarrollado con **React** (frontend), **Node.js con Express
    node database/scripts/ejecutar-migraciones.js
    ```
 
-   Las migraciones `001_crear_tablas.sql` y `002_crear_tablas_sprint2.sql` dejan la
-   estructura completa del sistema (tablas base y tablas `tipos_membresia`,
-   `membresias`, `pagos`, `rostros`, `accesos` y `auditoria`).
+   Las migraciones `001_crear_tablas.sql`, `002_crear_tablas_sprint2.sql` y
+   `003_crear_tablas_sprint3.sql` dejan la estructura completa del sistema
+   (tablas base, tablas `tipos_membresia`, `membresias`, `pagos`, `rostros`,
+   `accesos` y `auditoria`, y las tablas del Sprint 3: `entrenadores`,
+   `asignaciones_entrenador`, `rutinas`, `ejercicios_rutina`,
+   `objetivos_entrenamiento` y `progresos_clientes`).
 
 3. **Semillas** (ambas idempotentes: se detienen si el registro ya existe):
 
    ```bash
    mysql -u root -p gym_sistema < database/seeds/seed-administrador.sql
    mysql -u root -p gym_sistema < database/seeds/seed-datos-sprint2.sql
+   mysql -u root -p gym_sistema < database/seeds/seed-datos-sprint3.sql
    ```
 
    El usuario administrador semilla queda creado con estas credenciales de
@@ -66,6 +71,9 @@ Proyecto académico desarrollado con **React** (frontend), **Node.js con Express
 
    La segunda semilla crea los tipos de membresía "Mensual" (30 días, 500.00) y
    "Trimestral" (90 días, 1350.00) que usan los escenarios de membresías y pagos.
+   La tercera crea un entrenador de prueba (correo
+   `entrenador@gimnasio.test`, contraseña `Entrena1234!`) y dos clientes de
+   ejemplo para los escenarios del Sprint 3.
 
 4. **Backend** (puerto 3000):
 
@@ -106,17 +114,18 @@ Si MySQL no está disponible, las pruebas de integración se omiten con un
 aviso (las pruebas que no requieren motor se ejecutan igualmente).
 
 La guía de validación completa de extremo a extremo está en
-`specs/001-base-usuarios-clientes/quickstart.md` y
-`specs/002-membresias-pagos-acceso-facial/quickstart.md`.
+`specs/001-base-usuarios-clientes/quickstart.md`,
+`specs/002-membresias-pagos-acceso-facial/quickstart.md` y
+`specs/003-entrenadores-rutinas-dashboard/quickstart.md`.
 
 ## Roles del sistema
 
-| Rol | Funciones en el Sprint 2 |
+| Rol | Funciones en el Sprint 3 |
 |-----|--------------------------|
-| administrador | Gestión completa de usuarios, roles y clientes; tipos de membresía; asignar y renovar membresías; pagos y consulta de adeudos; registrar y consultar rostros; punto de acceso y consulta completa de accesos; auditoría |
-| recepcionista | Registrar y modificar clientes; consultar tipos activos para asignar o renovar; asignar y renovar membresías; registrar pagos; registrar rostros; identificar en el punto de acceso; consulta completa de accesos |
-| entrenador | Consultar clientes y membresías (solo lectura); consulta básica de accesos, **sin** motivos de rechazo |
-| cliente | Únicamente "Mi cuenta": su membresía, sus pagos, su adeudo y sus accesos |
+| administrador | Todo lo de los Sprints 1 y 2; además: registrar, modificar y dar de baja entrenadores; asignar y reasignar entrenadores a clientes; consultar todas las rutinas, objetivos y progresos; dashboard administrativo con indicadores y auditoría |
+| recepcionista | Asignar y reasignar entrenadores a clientes; consultar la carga del personal y el seguimiento (rutinas, objetivos y progresos) en modo lectura; **sin** editar rutinas ni registrar progresos |
+| entrenador | Gestionar la rutina, los objetivos y los progresos de **su** carga de clientes; consultar su propia carga (`/api/personal/mi-carga`) |
+| cliente | Únicamente "Mi cuenta", incluida la sección "Mi entrenamiento": su entrenador responsable, su rutina activa, sus objetivos y su histórico de progresos |
 
 Los permisos se validan **siempre** en el backend; ocultar opciones en la
 interfaz no es una medida de seguridad.
@@ -133,6 +142,18 @@ interfaz no es una medida de seguridad.
 | Consulta de accesos | `/accesos` | Vista completa o básica según el rol |
 | Mi cuenta | `/mi-cuenta` | Reservado al cliente autenticado |
 | Auditoría | backend | `GET /api/auditoria`, solo administrador |
+
+## Módulos del Sprint 3
+
+| Módulo | Rutas | Notas |
+|--------|-------|-------|
+| Entrenadores | `/api/entrenadores` | Ficha única por cuenta con rol `entrenador` (RN-15); alta y modificación solo administrador; la baja cierra sus asignaciones activas |
+| Asignaciones | `/api/asignaciones` | Una sola asignación activa por cliente (RN-16); la reasignación cierra la anterior con fecha; el histórico nunca se elimina |
+| Rutinas | `/api/rutinas` | El entrenador de la carga crea y modifica; una única rutina activa por cliente; el recepcionista solo consulta |
+| Objetivos y progresos | `/api/objetivos`, `/api/progresos` | Objetivos con estados y fecha de cierre; progresos **inmutables** (sin PUT ni DELETE), ordenados por fecha |
+| Mi entrenamiento | `/api/mi-entrenamiento` | Exclusivo del cliente; el cliente se resuelve desde el token (RN-22) |
+| Dashboard | `/api/dashboard` | Exclusivo del administrador; doce indicadores con filtro de periodo |
+| Personal | `/api/personal`, `/api/personal/mi-carga` | Carga del equipo con detalle y pendientes de asignación; `mi-carga` solo para el entrenador autenticado |
 
 ### Configuración del reconocimiento facial
 
@@ -159,6 +180,12 @@ versionan dentro de `node_modules`; se copian al preparar el entorno.
   autenticado; no existe una ruta pública de identificación.
 - Los resultados del control de acceso son de solo escritura para el backend
   (no existen operaciones de modificación ni borrado).
+- **Historiales inmutables (Sprint 3)**: los progresos de entrenamiento no
+  tienen endpoints de modificación ni eliminación, y las asignaciones y
+  rutinas pasadas se conservan cerradas o finalizadas (baja lógica siempre).
+- El cliente solo consulta su propio entrenamiento: el identificador del
+  cliente se resuelve en el backend desde el token, nunca desde un id enviado
+  por el navegador (RN-22).
 
 ## Documentación relacionada
 
@@ -166,4 +193,5 @@ versionan dentro de `node_modules`; se copian al preparar el entorno.
 - `docs/reglas.md` — reglas y principios del desarrollo (constitución).
 - `docs/sprint-1.md` — alcance detallado del Sprint 1.
 - `docs/sprint-2.md` — alcance detallado del Sprint 2.
+- `docs/sprint-3.md` — alcance detallado del Sprint 3.
 - `database/README.md` — instrucciones de la base de datos.
