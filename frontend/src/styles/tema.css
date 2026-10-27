@@ -1,0 +1,39 @@
+/* Tema visual compartido de GymAccess (fondo oscuro + acento rojo).
+   Importado una sola vez en main.jsx; todas las páginas pueden usar estas
+   variables. Las pantallas que aún no se rediseñaron (tema claro de
+   estilos.css) no las usan y conservan su apariencia. */
+:root {
+  /* Acento */
+  --color-acento: #e53935;         /* rojo principal */
+  --color-acento-claro: #ff5252;   /* variante clara (hover, detalles) */
+  --color-acento-suave: rgba(229, 57, 53, 0.14);
+
+  /* Fondos y superficies */
+  --color-fondo-oscuro: #0b0f1a;   /* fondo de página oscura */
+  --color-tarjeta: #111827;        /* tarjetas sobre fondo oscuro */
+  --color-borde-tarjeta: #1f2937;  /* borde de tarjetas y separadores */
+  --color-fondo-campo: #151b2c;    /* campos de formulario */
+  --color-fondo-cabecera: #0f172a; /* cabecera de tabla */
+  --color-borde-campo: rgba(255, 255, 255, 0.14);
+
+  /* Texto */
+  --color-texto: #f8fafc;          /* texto principal */
+  --color-texto-suave: #94a3b8;    /* texto secundario */
+
+  /* Estados (alertas y chips) */
+  --color-exito: #4ade80;          /* verde tenue */
+  --color-exito-suave: rgba(74, 222, 128, 0.12);
+  --color-error-suave: rgba(229, 57, 53, 0.16);
+  --color-error-texto: #fca5a5;
+}
+
+/* Accesibilidad global: si el usuario pide menos movimiento, se desactivan
+   animaciones y transiciones en toda la aplicación. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

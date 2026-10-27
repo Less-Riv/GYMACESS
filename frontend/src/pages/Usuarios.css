@@ -1,0 +1,437 @@
+/* Estilos de la pantalla de Usuarios: misma identidad visual que el login
+   (fondo oscuro + acento rojo). Los colores salen de las variables
+   compartidas de src/styles/tema.css.
+   Todas las reglas van SCOPEADAS bajo .pagina-usuarios para que no choquen
+   con los estilos globales de estilos.css (que se importan después) ni con
+   las clases de otras pantallas. No se usa la clase global .tarjeta
+   (tarjeta blanca del tema claro): aquí las tarjetas son .tarjeta-oscura. */
+
+.pagina-usuarios {
+  min-height: 100vh;
+  background: var(--color-fondo-oscuro);
+  color: var(--color-texto);
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+   Barra superior
+   --------------------------------------------------------------------------- */
+.pagina-usuarios .barra-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.9rem 2rem;
+  background: var(--color-fondo-cabecera);
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+}
+
+.pagina-usuarios .barra-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pagina-usuarios .barra-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: var(--color-acento);
+  color: #ffffff;
+}
+
+.pagina-usuarios .barra-logo svg { width: 1.15rem; height: 1.15rem; }
+
+.pagina-usuarios .barra-marca {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.pagina-usuarios .barra-marca-acento { color: var(--color-acento-claro); }
+
+.pagina-usuarios .barra-separador {
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-borde-tarjeta);
+}
+
+.pagina-usuarios .barra-titulo {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* Botón secundario (enlace "Volver al inicio"). */
+.pagina-usuarios .boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.pagina-usuarios .boton-secundario:hover {
+  border-color: var(--color-acento);
+  color: #ffffff;
+  background: var(--color-acento-suave);
+}
+
+/* ---------------------------------------------------------------------------
+   Avisos (éxito y error)
+   --------------------------------------------------------------------------- */
+.pagina-usuarios .avisos {
+  max-width: 1280px;
+  margin: 1.25rem auto 0;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pagina-usuarios .alerta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.pagina-usuarios .alerta svg {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.pagina-usuarios .alerta-texto { flex: 1; }
+
+.pagina-usuarios .alerta-exito {
+  background: var(--color-exito-suave);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: var(--color-exito);
+}
+
+.pagina-usuarios .alerta-error {
+  background: var(--color-error-suave);
+  border: 1px solid rgba(255, 82, 82, 0.45);
+  color: var(--color-error-texto);
+}
+
+.pagina-usuarios .boton-reintentar {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(255, 82, 82, 0.5);
+  border-radius: 8px;
+  background: transparent;
+  color: #fecaca;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.pagina-usuarios .boton-reintentar:hover {
+  background: rgba(229, 57, 53, 0.25);
+  border-color: var(--color-acento-claro);
+}
+
+/* ---------------------------------------------------------------------------
+   Layout en dos columnas (tarjeta de alta + listado)
+   --------------------------------------------------------------------------- */
+.pagina-usuarios .contenido {
+  max-width: 1280px;
+  margin: 1.25rem auto 0;
+  padding: 0 2rem 2rem;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.pagina-usuarios .tarjeta-oscura {
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde-tarjeta);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.pagina-usuarios .tarjeta-oscura h2 {
+  margin: 0 0 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* ---------------------------------------------------------------------------
+   Formulario de alta
+   --------------------------------------------------------------------------- */
+.pagina-usuarios .formulario-alta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.pagina-usuarios .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pagina-usuarios .campo label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+}
+
+.pagina-usuarios .campo input,
+.pagina-usuarios .campo select {
+  background: var(--color-fondo-campo);
+  border: 1px solid var(--color-borde-campo);
+  border-radius: 10px;
+  color: var(--color-texto);
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pagina-usuarios .campo input:focus,
+.pagina-usuarios .campo select:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px var(--color-acento-suave);
+}
+
+/* Campo de contraseña con botón del ojo. */
+.pagina-usuarios .campo-password {
+  position: relative;
+  display: flex;
+}
+
+.pagina-usuarios .campo-password input {
+  width: 100%;
+  padding-right: 2.6rem;
+}
+
+.pagina-usuarios .boton-ojo {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.pagina-usuarios .boton-ojo:hover { color: var(--color-texto); }
+.pagina-usuarios .boton-ojo svg { width: 1.2rem; height: 1.2rem; }
+
+.pagina-usuarios .campo-ayuda {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-texto-suave);
+}
+
+.pagina-usuarios .boton-primario {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.7rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--color-acento);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.1s ease;
+}
+
+.pagina-usuarios .boton-primario:hover:not(:disabled) {
+  background: var(--color-acento-claro);
+}
+
+.pagina-usuarios .boton-primario:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* ---------------------------------------------------------------------------
+   Tabla de usuarios
+   --------------------------------------------------------------------------- */
+.pagina-usuarios .listado-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pagina-usuarios .listado-cabecera h2 { margin: 0; }
+
+.pagina-usuarios .listado-total {
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: var(--color-fondo-campo);
+  border: 1px solid var(--color-borde-campo);
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* El scroll horizontal ocurre dentro de la tarjeta, no en la página. */
+.pagina-usuarios .tabla-contenedor { overflow-x: auto; }
+
+.pagina-usuarios .tabla-usuarios {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+.pagina-usuarios .tabla-usuarios th {
+  background: var(--color-fondo-cabecera);
+  color: var(--color-texto-suave);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+  white-space: nowrap;
+}
+
+.pagina-usuarios .tabla-usuarios th:first-child { border-top-left-radius: 10px; }
+.pagina-usuarios .tabla-usuarios th:last-child  { border-top-right-radius: 10px; }
+
+.pagina-usuarios .tabla-usuarios td {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--color-texto);
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+  vertical-align: middle;
+}
+
+.pagina-usuarios .tabla-usuarios tbody tr {
+  transition: background 0.18s ease;
+}
+
+.pagina-usuarios .tabla-usuarios tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.pagina-usuarios .tabla-usuarios tbody tr:last-child td { border-bottom: 0; }
+
+.pagina-usuarios .celda-correo { overflow-wrap: anywhere; }
+
+/* Chips de rol y estado. */
+.pagina-usuarios .chip-rol,
+.pagina-usuarios .chip-estado {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.pagina-usuarios .rol-administrador {
+  background: rgba(229, 57, 53, 0.15);
+  border-color: rgba(229, 57, 53, 0.4);
+  color: #fca5a5;
+}
+
+.pagina-usuarios .rol-recepcionista {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.4);
+  color: #93c5fd;
+}
+
+.pagina-usuarios .rol-entrenador {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+}
+
+.pagina-usuarios .rol-cliente {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #cbd5e1;
+}
+
+.pagina-usuarios .estado-activo {
+  background: var(--color-exito-suave);
+  border-color: rgba(74, 222, 128, 0.35);
+  color: var(--color-exito);
+}
+
+.pagina-usuarios .estado-inactivo {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.3);
+  color: var(--color-texto-suave);
+}
+
+/* Select pequeño de "Cambiar rol". */
+.pagina-usuarios .select-rol {
+  background: var(--color-fondo-campo);
+  border: 1px solid var(--color-borde-campo);
+  border-radius: 8px;
+  color: var(--color-texto);
+  padding: 0.35rem 0.5rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.18s ease;
+}
+
+.pagina-usuarios .select-rol:hover { border-color: rgba(255, 255, 255, 0.28); }
+
+.pagina-usuarios .select-rol:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px var(--color-acento-suave);
+}
+
+/* Estado vacío de la tabla. */
+.pagina-usuarios .tabla-vacia {
+  margin: 0;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+/* Foco visible para teclado en enlaces y botones. */
+.pagina-usuarios .boton-secundario:focus-visible,
+.pagina-usuarios .boton-primario:focus-visible,
+.pagina-usuarios .boton-reintentar:focus-visible,
+.pagina-usuarios .boton-ojo:focus-visible {
+  outline: 2px solid var(--color-acento-claro);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Adaptación a pantallas pequeñas: las tarjetas se apilan.
+   --------------------------------------------------------------------------- */
+@media (max-width: 1000px) {
+  .pagina-usuarios .contenido { grid-template-columns: 1fr; }
+  .pagina-usuarios .barra-superior { padding: 0.9rem 1.25rem; }
+  .pagina-usuarios .avisos { padding: 0 1.25rem; }
+  .pagina-usuarios .contenido { padding: 0 1.25rem 1.5rem; }
+}

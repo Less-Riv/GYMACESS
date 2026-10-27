@@ -1,16 +1,9 @@
 /* Estilos de la pantalla de inicio de sesión (refresco visual, dos paneles
    a pantalla completa sobre fondo oscuro). Los cambios se limitan al login:
    el resto de pantallas conserva sus estilos globales de src/estilos.css.
-   ÚNICO LUGAR DONDE SE DEFINEN LOS COLORES DE ESTA PANTALLA: para cambiar
-   el acento basta con editar las líneas siguientes. */
-.pagina-login {
-  --color-acento: #e53935;        /* rojo principal */
-  --color-acento-claro: #ff5252;  /* variante clara (hover, detalles) */
-  --color-acento-suave: rgba(229, 57, 53, 0.14); /* fondos suaves */
-  --color-fondo-oscuro: #0b0f1a;  /* fondo del panel derecho */
-  --color-fondo-campo: #151b2c;   /* fondo de los campos del formulario */
-  --color-borde-campo: rgba(255, 255, 255, 0.14);
-}
+   Las variables de color (--color-acento, --color-fondo-oscuro,
+   --color-fondo-campo…) ahora se definen UNA sola vez en
+   src/styles/tema.css, importado en main.jsx; este archivo solo las usa. */
 
 /* ---------------------------------------------------------------------------
    Distribución: panel de marca (izquierda) + formulario (derecha)

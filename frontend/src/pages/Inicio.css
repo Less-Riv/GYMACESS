@@ -1,0 +1,230 @@
+/* Estilos de la pantalla de inicio (menú de módulos posterior al login).
+   Misma identidad visual que el login y Usuarios: fondo oscuro con acento
+   rojo, usando las variables compartidas de src/styles/tema.css.
+   Todas las reglas van SCOPEADAS bajo .pagina-inicio para no chocar con los
+   estilos globales de estilos.css ni con las clases de otras pantallas. */
+
+.pagina-inicio {
+  min-height: 100vh;
+  color: var(--color-texto);
+  color-scheme: dark;
+  /* Fondo oscuro con un resplandor rojo muy tenue en la esquina superior
+     izquierda (#7f1d1d al 18% de opacidad). */
+  background:
+    radial-gradient(90rem 50rem at -10% -15%, rgba(127, 29, 29, 0.18), transparent 60%),
+    var(--color-fondo-oscuro);
+}
+
+/* ---------------------------------------------------------------------------
+   Barra superior: marca a la izquierda; chip del usuario y salir a la derecha
+   --------------------------------------------------------------------------- */
+.pagina-inicio .barra-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.9rem 2rem;
+  background: var(--color-fondo-cabecera);
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+}
+
+.pagina-inicio .barra-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pagina-inicio .barra-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: var(--color-acento);
+  color: #ffffff;
+}
+
+.pagina-inicio .barra-logo svg { width: 1.15rem; height: 1.15rem; }
+
+.pagina-inicio .barra-marca {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-texto);
+}
+
+.pagina-inicio .barra-marca-acento { color: var(--color-acento-claro); }
+
+.pagina-inicio .barra-derecha {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+/* Chip del usuario: iniciales en círculo rojo + nombre + rol. */
+.pagina-inicio .chip-usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.9rem 0.35rem 0.35rem;
+  border: 1px solid var(--color-borde-tarjeta);
+  border-radius: 999px;
+  background: var(--color-fondo-campo);
+}
+
+.pagina-inicio .chip-iniciales {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--color-acento);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.pagina-inicio .chip-datos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.pagina-inicio .chip-nombre {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.pagina-inicio .chip-rol {
+  font-size: 0.72rem;
+  color: var(--color-texto-suave);
+}
+
+/* Botón secundario "Cerrar sesión". */
+.pagina-inicio .boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.pagina-inicio .boton-secundario:hover {
+  border-color: var(--color-acento);
+  color: var(--color-acento-claro);
+  background: var(--color-acento-suave);
+}
+
+/* ---------------------------------------------------------------------------
+   Bienvenida
+   --------------------------------------------------------------------------- */
+.pagina-inicio .inicio-contenido {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+
+.pagina-inicio .bienvenida-titulo {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  color: var(--color-texto);
+}
+
+.pagina-inicio .bienvenida-nombre { color: var(--color-acento); }
+
+.pagina-inicio .bienvenida-sub {
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+  color: var(--color-texto-suave);
+}
+
+/* ---------------------------------------------------------------------------
+   Módulos agrupados: cuadrícula de tarjetas clicables
+   --------------------------------------------------------------------------- */
+.pagina-inicio .grupo { margin-top: 2rem; }
+
+.pagina-inicio .grupo-titulo {
+  margin: 0 0 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-texto-suave);
+}
+
+.pagina-inicio .modulos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+/* Cada tarjeta es el mismo enlace de React Router de antes. */
+.pagina-inicio .modulo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 20px;
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde-tarjeta);
+  border-radius: 14px;
+  color: var(--color-texto);
+  text-decoration: none;
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pagina-inicio .modulo:hover {
+  border-color: var(--color-acento);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.pagina-inicio .modulo:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.pagina-inicio .modulo-icono {
+  display: inline-flex;
+  color: var(--color-texto-suave);
+  transition: color 0.18s ease;
+}
+
+.pagina-inicio .modulo-icono svg { width: 1.5rem; height: 1.5rem; }
+
+.pagina-inicio .modulo:hover .modulo-icono { color: var(--color-acento-claro); }
+
+.pagina-inicio .modulo-nombre {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.pagina-inicio .modulo-descripcion {
+  font-size: 0.83rem;
+  line-height: 1.45;
+  color: var(--color-texto-suave);
+}
+
+/* Foco visible para teclado en el botón de salir. */
+.pagina-inicio .boton-secundario:focus-visible {
+  outline: 2px solid var(--color-acento-claro);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Pantallas pequeñas
+   --------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .pagina-inicio .barra-superior { padding: 0.9rem 1.25rem; }
+  .pagina-inicio .inicio-contenido { padding: 1.5rem 1.25rem 2.5rem; }
+}
