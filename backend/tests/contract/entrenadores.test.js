@@ -105,10 +105,15 @@ test('US-S3-01: una cuenta inexistente, inactiva o con otro rol responde 400 USU
     .expect(400);
   assert.equal(respuesta.body.codigo, 'USUARIO_INVALIDO');
 
-  // Cuenta existente pero con rol cliente.
+  // Cuenta existente con rol cliente (la crea el hook before con este correo).
   const { obtenerPool } = await import('../../src/config/database.js');
   const [cuentas] = await obtenerPool().query(
-    "SELECT id_usuario FROM usuarios WHERE correo = 'cuenta-cli@entrenadores.test'"
+    "SELECT id_usuario FROM usuarios WHERE correo = 'cliente@entrenadores.test'"
+  );
+  assert.equal(
+    cuentas.length,
+    1,
+    'la cuenta con rol cliente debe existir: la crea el hook before'
   );
   respuesta = await request(app)
     .post('/api/entrenadores')

@@ -125,7 +125,7 @@ test('US-S3-07: los filtros entrenador_id y estado_asignacion funcionan (200)', 
     .get('/api/personal?estado_asignacion=cerrada')
     .set('Authorization', `Bearer ${tokens.administrador}`)
     .expect(200);
-  for (const persona of cerrada.body.personal) {
+  for (const persona of cerradas.body.personal) {
     assert.ok(persona.clientes.every((c) => c.estado === 'cerrada'));
   }
 

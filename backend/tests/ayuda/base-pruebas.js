@@ -12,6 +12,7 @@
 // lugar de fallar, para que `npm test` siga siendo ejecutable en entornos sin
 // el motor instalado.
 import mysql from 'mysql2/promise';
+import http from 'node:http';
 import { readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { rmSync } from 'node:fs';
 import os from 'node:os';
@@ -20,6 +21,29 @@ import { fileURLToPath } from 'node:url';
 import jwt from 'jsonwebtoken';
 import { entorno } from '../../src/config/entorno.js';
 import { fijarPoolParaPruebas, cerrarPool } from '../../src/config/database.js';
+
+// supertest crea un servidor HTTP por cada `request(app)` y solo lo cierra al
+// finalizar la petición (.end()). Si un test falla antes de que la petición se
+// despache (p. ej. al construir el cuerpo), ese servidor queda escuchando y el
+// proceso de pruebas nunca termina. Estos servidores se registran aquí para
+// cerrarlos en finalizarPruebas() y garantizar que cada archivo termine solo.
+const servidoresPrueba = [];
+const crearServidorOriginal = http.createServer;
+http.createServer = function crearServidorRastreado(...args) {
+  const servidor = crearServidorOriginal.apply(this, args);
+  servidoresPrueba.push(servidor);
+  return servidor;
+};
+
+async function cerrarServidoresPrueba() {
+  for (const servidor of servidoresPrueba.splice(0)) {
+    if (!servidor.listening) continue;
+    // Deja de aceptar conexiones nuevas y corta las abiertas para que el
+    // cierre no dependa de que un cliente se desconecte.
+    servidor.closeAllConnections?.();
+    await new Promise((resolver) => servidor.close(() => resolver()));
+  }
+}
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
@@ -161,6 +185,7 @@ export async function prepararBasePruebas() {
 }
 
 export async function finalizarPruebas() {
+  await cerrarServidoresPrueba();
   await cerrarPool();
   await liberarBloqueo();
 }

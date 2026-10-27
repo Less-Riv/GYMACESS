@@ -1,9 +1,21 @@
 // Acceso a datos de la tabla asignaciones_entrenador (T017, US2/US7; FR-003,
 // FR-004, RN-16). Todas las consultas usan parámetros posicionales (?).
 import { obtenerPool } from '../config/database.js';
+import { aFechaISO } from '../utils/fechas.js';
 
 function base(conexion) {
   return conexion ?? obtenerPool();
+}
+
+// `fecha_asignacion` y `fecha_fin` son DATE: se proyectan como AAAA-MM-DD
+// (contrato api-entrenadores-asignaciones.md) en lugar del objeto Date.
+function presentarAsignacion(asignacion) {
+  if (!asignacion) return null;
+  return {
+    ...asignacion,
+    fecha_asignacion: aFechaISO(asignacion.fecha_asignacion),
+    fecha_fin: aFechaISO(asignacion.fecha_fin),
+  };
 }
 
 // RN-16: con bloqueo (FOR UPDATE) se serializa el acceso a la fila del
@@ -25,7 +37,7 @@ export async function buscarAsignacionPorId(id, { conexion, bloquear } = {}) {
     `SELECT * FROM asignaciones_entrenador WHERE id_asignacion = ? ${bloqueo}`,
     [id]
   );
-  return filas[0] || null;
+  return presentarAsignacion(filas[0] || null);
 }
 
 export async function crearAsignacion(
@@ -122,7 +134,7 @@ export async function listarAsignaciones({
      ORDER BY a.id_asignacion DESC`,
     valores
   );
-  return filas;
+  return filas.map(presentarAsignacion);
 }
 
 // ---------------------------------------------------------------------------
@@ -174,7 +186,7 @@ export async function listarPersonal({ entrenadorId = null, estadoAsignacion = n
       lista.push({
         id_cliente: fila.id_cliente,
         nombre: `${fila.nombre} ${fila.apellido}`,
-        fecha_asignacion: fila.fecha_asignacion,
+        fecha_asignacion: aFechaISO(fila.fecha_asignacion),
         estado: fila.estado,
         estado_cliente: fila.estado_cliente,
       });

@@ -40,7 +40,7 @@ infraestructura de los Sprints 1 y 2).
 **?? CRITICAL**: No user story work can begin until this phase is complete
 
 - [X] T003 Crear database/migrations/003_crear_tablas_sprint3.sql con las tablas `entrenadores`, `asignaciones_entrenador`, `rutinas`, `ejercicios_rutina`, `objetivos_entrenamiento` y `progresos_clientes` según data-model.md: motor InnoDB, `utf8mb4`, claves foráneas con integridad referencial; `entrenadores.id_usuario` **ÚNICO** (RN-15); `ejercicios_rutina` con `ON DELETE CASCADE` sobre `rutinas`; índices `ix_asignaciones_cliente_estado`, `ix_rutinas_cliente_estado` y `ix_progresos_clientes_fecha`; SIN tocar las tablas de los Sprints 1 y 2
-- [ ] T004 Aplicar la migración en la base local y en la base de pruebas ejecutando `node database/scripts/ejecutar-migraciones.js` y verificando que las seis tablas quedan creadas
+- [X] T004 Aplicar la migración en la base local y en la base de pruebas ejecutando `node database/scripts/ejecutar-migraciones.js` y verificando que las seis tablas quedan creadas
 - [X] T005 [P] Crear database/seeds/seed-datos-sprint3.sql con un usuario de prueba con rol `entrenador` (contraseña con hash bcrypt) y dos clientes de ejemplo, idempotente al estilo de seeds/seed-datos-sprint2.sql
 
 **Checkpoint**: base de datos del sprint lista; las historias pueden empezar en paralelo
@@ -66,7 +66,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T011 [US1] Crear el controlador en backend/src/controllers/entrenadores.controller.js con los códigos HTTP del contrato (201, 400, 403, 404, 409)
 - [X] T012 [US1] Crear las rutas en backend/src/routes/entrenadores.routes.js con `autenticar` y `autorizar` (POST/PUT solo administrador; GET administrador y recepcionista) y montarlas en backend/src/app.js como `/api/entrenadores`
 - [X] T013 [P] [US1] Crear la página frontend/src/pages/Entrenadores.jsx (listado con carga, formulario de alta y modificación, mensajes de éxito y error) y registrarla como ruta protegida para administrador en frontend/src/App.jsx
-- [ ] T014 [US1] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US1
+- [X] T014 [US1] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US1
 
 **Checkpoint**: US1 funcional y verificable de forma independiente
 
@@ -91,7 +91,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T020 [US2] Ampliar backend/src/services/entrenador.service.js para cerrar en la misma transacción las asignaciones activas del entrenador al pasar `estado = 'inactivo'` (FR-001, investigación §6)
 - [X] T021 [US2] Crear el controlador en backend/src/controllers/asignaciones.controller.js y las rutas en backend/src/routes/asignaciones.routes.js (POST y PUT para administrador y recepcionista; GET para administrador, recepcionista y entrenador con filtro propio) y montarlas en backend/src/app.js como `/api/asignaciones`
 - [X] T022 [P] [US2] Crear el componente frontend/src/components/AsignarEntrenador.jsx (alta y reasignación con confirmación mediante frontend/src/components/ModalConfirmacion.jsx) y usarlo en frontend/src/pages/ClienteDetalle.jsx
-- [ ] T023 [US2] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US2 sin romper US1
+- [X] T023 [US2] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US2 sin romper US1
 
 **Checkpoint**: asignación y reasignación operativas con histórico
 
@@ -116,7 +116,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T029 [US3] Crear el controlador en backend/src/controllers/rutinas.controller.js y las rutas en backend/src/routes/rutinas.routes.js (GET para administrador, recepcionista y entrenador filtrando la carga; POST/PUT solo entrenador de su carga) y montarlas en backend/src/app.js como `/api/rutinas`
 - [X] T030 [P] [US3] Crear los componentes frontend/src/components/RutinaForm.jsx y frontend/src/components/EjercicioForm.jsx (alta y edición de rutina con lista de ejercicios reordenables)
 - [X] T031 [US3] Crear la página frontend/src/pages/Rutinas.jsx (listado y detalle de rutinas con sus ejercicios), registrarla en frontend/src/App.jsx y enlazarla desde frontend/src/pages/ClienteDetalle.jsx
-- [ ] T032 [US3] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US3 sin romper US1 ni US2
+- [X] T032 [US3] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US3 sin romper US1 ni US2
 
 **Checkpoint**: el entrenador puede operar rutinas de su carga de forma independiente
 
@@ -141,7 +141,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T038 [US4] Crear el controlador en backend/src/controllers/progresos.controller.js y las rutas en backend/src/routes/progresos.routes.js (objetivos y progresos; edición solo del entrenador de la carga; consulta para administrador y recepcionista) y montarlas en backend/src/app.js como `/api/objetivos` y `/api/progresos`
 - [X] T039 [P] [US4] Crear el componente frontend/src/components/RegistroProgreso.jsx (fecha, comentario, peso y medidas opcionales) y el panel de objetivos con cambio de estado en frontend/src/components/ObjetivosPanel.jsx
 - [X] T040 [US4] Integrar los componentes de US4 en frontend/src/pages/Rutinas.jsx y frontend/src/pages/ClienteDetalle.jsx con mensajes claros de éxito y error
-- [ ] T041 [US4] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US4 sin romper historias anteriores
+- [X] T041 [US4] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US4 sin romper historias anteriores
 
 **Checkpoint**: objetivos y progresos históricos funcionando para el entrenador
 
@@ -163,7 +163,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T044 [US5] Crear el servicio en backend/src/services/mi-entrenamiento.service.js: resolver siempre el cliente desde el usuario autenticado (RN-22, FR-013), devolver rutina activa con ejercicios, objetivos y progresos ordenados, y los mensajes de FR-014 cuando no hay datos
 - [X] T045 [US5] Crear el controlador en backend/src/controllers/mi-entrenamiento.controller.js y las rutas en backend/src/routes/mi-entrenamiento.routes.js (solo rol cliente) y montarlas en backend/src/app.js como `/api/mi-entrenamiento`
 - [X] T046 [US5] Ampliar frontend/src/pages/MiCuenta.jsx con la pestaña "Mi entrenamiento" (entrenador responsable, rutina con ejercicios, objetivos con estado e histórico de progresos), reutilizando frontend/src/estilos.css
-- [ ] T047 [US5] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US5 sin romper historias anteriores
+- [X] T047 [US5] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US5 sin romper historias anteriores
 
 **Checkpoint**: el cliente consume su propio entrenamiento sin ver datos ajenos
 
@@ -188,7 +188,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T053 [US6] Crear el controlador en backend/src/controllers/dashboard.controller.js y las rutas en backend/src/routes/dashboard.routes.js (solo administrador con `autorizar('administrador')`) y montarlas en backend/src/app.js como `/api/dashboard`
 - [X] T054 [P] [US6] Crear el componente frontend/src/components/TarjetaIndicador.jsx para presentar cada indicador con su etiqueta y valor
 - [X] T055 [US6] Crear la página frontend/src/pages/Dashboard.jsx con el filtro de periodo y las secciones del contrato, registrarla en frontend/src/App.jsx como ruta protegida del administrador
-- [ ] T056 [US6] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US6 sin romper historias anteriores
+- [X] T056 [US6] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US6 sin romper historias anteriores
 
 **Checkpoint**: dashboard operativo y exclusivo del administrador
 
@@ -210,7 +210,7 @@ infraestructura de los Sprints 1 y 2).
 - [X] T059 [US7] Ampliar backend/src/models/asignacion.model.js con las consultas de la vista del personal (listar entrenadores con sus clientes asignados y los clientes sin asignación activa, con filtros) y la de la carga propia del entrenador autenticado
 - [X] T060 [US7] Crear el controlador en backend/src/controllers/personal.controller.js y las rutas en backend/src/routes/personal.routes.js (`GET /api/personal` para administrador y recepcionista; `GET /api/personal/mi-carga` solo para entrenador, 403 en los demás casos) y montarlas en backend/src/app.js como `/api/personal`
 - [X] T061 [P] [US7] Crear la página frontend/src/pages/Personal.jsx (listado del personal con carga, detalle por entrenador y sección de pendientes de asignación, con filtro) y registrarla en frontend/src/App.jsx para administrador y recepcionista
-- [ ] T062 [US7] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US7 sin romper historias anteriores
+- [X] T062 [US7] Ejecutar `npm test` en backend/ y dejar en verde las pruebas de US7 sin romper historias anteriores
 
 **Checkpoint**: todas las historias del sprint operativas de forma independiente
 
@@ -221,11 +221,14 @@ infraestructura de los Sprints 1 y 2).
 **Purpose**: verificación transversal, auditoría, documentación y regresión
 
 - [ ] T063 [P] Verificar que las seis acciones de auditoría del sprint (`asignar_entrenador`, `reasignar_entrenador`, `crear_rutina`, `modificar_rutina`, `registrar_objetivo`, `registrar_progreso`) quedan registradas con usuario, módulo, fecha, resultado y descripción, y que su consulta sigue respondiendo 403 a los no administradores (FR-020, SC-013)
-- [ ] T064 Ejecutar la suite completa del backend (`npm test` en backend/) y corregir cualquier regresión de los Sprints 1 y 2 (FR-029)
+  - **Pendiente** (2026-10-27): las pruebas automatizadas ya confirman que las seis acciones quedan registradas y que la consulta responde 403 a los no administradores (`tests/contract/auditoria.test.js`, `tests/contract/rutinas.test.js`, `tests/contract/progresos.test.js`, `tests/integration/asignaciones-us-s3-02.test.js`), pero falta verificar explícitamente que cada registro incluye el campo `descripcion` junto a usuario, módulo, fecha y resultado.
+- [X] T064 Ejecutar la suite completa del backend (`npm test` en backend/) y corregir cualquier regresión de los Sprints 1 y 2 (FR-029)
 - [X] T065 [P] Actualizar README.md describiendo los módulos nuevos del Sprint 3 (entrenadores, asignaciones, rutinas, objetivos, progresos, dashboard y personal)
 - [ ] T066 Ejecutar la validación de extremo a extremo de quickstart.md (escenarios 3.1 a 3.8) y dejar registro de los resultados (principio X, FR-031)
+  - **Pendiente** (2026-10-27): requiere la validación manual de los escenarios 3.1 a 3.8 de quickstart.md; no se ejecutó en esta iteración (la suite automatizada `npm test` queda en 233/233).
 - [X] T067 Revisión final de seguridad: permisos por rol validados en el backend en todos los endpoints nuevos, sin eliminaciones ordinarias de historiales, sin datos sensibles en respuestas y sin conexiones del frontend a MySQL (FR-019, FR-021, FR-024, FR-025, FR-027)
 - [ ] T068 [P] Tras la aprobación del equipo, incorporar las reglas RN-15 a RN-24 en docs/project-context.md §12 y confirmar en docs/reglas.md que las reglas vigentes siguen aplicándose sin contradicción (FR-032, principio I del prospecto de constitución)
+  - **Pendiente** (2026-10-27): `docs/project-context.md` §12 y `docs/reglas.md` todavía no incorporan las reglas RN-15 a RN-24; espera la aprobación del equipo.
 
 ---
 

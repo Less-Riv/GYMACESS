@@ -145,8 +145,8 @@ test('US-S3-06: con el periodo por defecto la respuesta es válida y recalcable 
     .expect(200);
 
   const hoy = new Date().toISOString().slice(0, 10);
-  assert.equal(porDefecto.periodo.hasta, hoy);
-  assert.ok(porDefecto.periodo.desde < hoy, 'por defecto el periodo arranca en el mes anterior');
+  assert.equal(porDefecto.body.periodo.hasta, hoy);
+  assert.ok(porDefecto.body.periodo.desde < hoy, 'por defecto el periodo arranca en el mes anterior');
 
   // Cambiar el periodo recalcula los indicadores del periodo (nunca tablas
   // de resumen): un periodo lejano no contiene progresos ni objetivos.

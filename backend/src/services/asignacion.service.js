@@ -162,7 +162,12 @@ export async function reasignarAsignacion(idAsignacion, datos, idUsuarioAuditori
 export async function obtenerListadoAsignaciones(rolSolicitante, idUsuario, filtros) {
   // RN-19: el entrenador solo recibe las asignaciones de su propia carga.
   let soloEntrenadorPropio = null;
+  // La carga de un entrenador son sus asignaciones VIGENTES: al reasignarse un
+  // cliente la anterior se cierra y el entrenador anterior deja de verla
+  // (RN-16, FR-004). Admin y recepcionista sí reciben el histórico completo.
+  let estado = null;
   if (rolSolicitante === 'entrenador') {
+    estado = 'activa';
     soloEntrenadorPropio = await idFichaDelEntrenador(idUsuario);
     if (!soloEntrenadorPropio) {
       // Un usuario entrenador sin ficha no tiene carga que consultar.
@@ -174,6 +179,7 @@ export async function obtenerListadoAsignaciones(rolSolicitante, idUsuario, filt
     clienteId: filtros.cliente_id || null,
     entrenadorId: filtros.entrenador_id || null,
     soloEntrenadorPropio,
+    estado,
   });
   return { asignaciones };
 }

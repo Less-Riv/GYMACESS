@@ -1,9 +1,21 @@
 // Acceso a datos de la tabla objetivos_entrenamiento (T035, US4; FR-010,
 // RN-21). El histórico se conserva; nunca se eliminan registros (RN-17).
 import { obtenerPool } from '../config/database.js';
+import { aFechaISO } from '../utils/fechas.js';
 
 function base(conexion) {
   return conexion ?? obtenerPool();
+}
+
+// `fecha_objetivo` y `fecha_cierre` son DATE: se proyectan como AAAA-MM-DD
+// (contrato api-rutinas-progreso.md) en lugar del objeto Date de mysql2.
+function presentarObjetivo(objetivo) {
+  if (!objetivo) return null;
+  return {
+    ...objetivo,
+    fecha_objetivo: aFechaISO(objetivo.fecha_objetivo),
+    fecha_cierre: aFechaISO(objetivo.fecha_cierre),
+  };
 }
 
 export async function crearObjetivo(
@@ -23,7 +35,7 @@ export async function buscarObjetivoPorId(id, conexion) {
     'SELECT * FROM objetivos_entrenamiento WHERE id_objetivo = ?',
     [id]
   );
-  return filas[0] || null;
+  return presentarObjetivo(filas[0] || null);
 }
 
 export async function listarObjetivos({
@@ -59,7 +71,7 @@ export async function listarObjetivos({
      ORDER BY o.id_objetivo DESC`,
     valores
   );
-  return filas;
+  return filas.map(presentarObjetivo);
 }
 
 // FR-010: los cambios de estado conservan la fecha de cierre para poder
