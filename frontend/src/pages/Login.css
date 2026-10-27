@@ -1,0 +1,472 @@
+/* Estilos de la pantalla de inicio de sesión (refresco visual, dos paneles
+   a pantalla completa sobre fondo oscuro). Los cambios se limitan al login:
+   el resto de pantallas conserva sus estilos globales de src/estilos.css.
+   ÚNICO LUGAR DONDE SE DEFINEN LOS COLORES DE ESTA PANTALLA: para cambiar
+   el acento basta con editar las líneas siguientes. */
+.pagina-login {
+  --color-acento: #e53935;        /* rojo principal */
+  --color-acento-claro: #ff5252;  /* variante clara (hover, detalles) */
+  --color-acento-suave: rgba(229, 57, 53, 0.14); /* fondos suaves */
+  --color-fondo-oscuro: #0b0f1a;  /* fondo del panel derecho */
+  --color-fondo-campo: #151b2c;   /* fondo de los campos del formulario */
+  --color-borde-campo: rgba(255, 255, 255, 0.14);
+}
+
+/* ---------------------------------------------------------------------------
+   Distribución: panel de marca (izquierda) + formulario (derecha)
+   --------------------------------------------------------------------------- */
+.pagina-login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  background: var(--color-fondo-oscuro);
+  color-scheme: dark; /* inputs/autocompletado del navegador en modo oscuro */
+}
+
+.login-panel {
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background: radial-gradient(130% 110% at 15% 0%, #7f1d1d 0%, var(--color-fondo-oscuro) 62%);
+  color: #f9fafb;
+}
+
+/* Resplandor sutil del acento en el panel. */
+.login-panel::after {
+  content: '';
+  position: absolute;
+  inset: auto -10% -20% auto;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(closest-side, var(--color-acento-suave), transparent 70%);
+  pointer-events: none;
+}
+
+.login-marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.login-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 8px;
+  background: var(--color-acento);
+  color: #ffffff;
+}
+
+.login-logo svg { width: 1.3rem; height: 1.3rem; }
+
+.login-nombre-acento { color: var(--color-acento-claro); }
+
+/* Titular del panel: mensaje principal, siempre visible (los slides del
+   carrusel cambian debajo). Entra con un fundido suave al cargar. */
+.login-titular {
+  margin: 0;
+  font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  /* Sombra sutil para que el texto blanco y el rojo se lean sobre el
+     degradado rojo oscuro. */
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  animation: entrada-titular 0.7s ease 0.15s both;
+}
+
+.titular-acento { color: var(--color-acento); }
+
+@keyframes entrada-titular {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------------------
+   Carrusel: los slides se apilan y se cruzan con opacidad (fade suave)
+   --------------------------------------------------------------------------- */
+.carrusel {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.carrusel-diapositiva {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(calc(-50% + 8px));
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s;
+  pointer-events: none;
+}
+
+.carrusel-diapositiva.activa {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%);
+  pointer-events: auto;
+}
+
+/* Tarjetas flotantes: desfase entre una y otra para que no se muevan
+   sincronizadas (misma duración, retrasos distintos). */
+.tarjeta-flotante {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  max-width: 22rem;
+}
+
+/* Slide 1: tarjeta de reconocimiento facial (flota hacia arriba + rota). */
+.tarjeta-facial {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  animation: flotar-arriba 6s ease-in-out infinite;
+}
+
+/* Slide 2: tarjeta de accesos (flota hacia abajo, rotación opuesta,
+   1.8 s de desfase respecto a la anterior). */
+.tarjeta-accesos {
+  animation: flotar-abajo 6s ease-in-out 1.8s infinite;
+}
+
+/* Slide 3: tarjeta de marca (otro desfase). */
+.tarjeta-marca {
+  animation: flotar-arriba 7s ease-in-out 0.9s infinite;
+}
+
+@keyframes flotar-arriba {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(1.5deg); }
+}
+
+@keyframes flotar-abajo {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(10px) rotate(-1.5deg); }
+}
+
+/* Recuadro de esquinas del rostro: pulso suave de escala y opacidad. */
+.marco-rostro {
+  position: relative;
+  flex: 0 0 auto;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 10px;
+  background: rgba(229, 57, 53, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulso-marco 4s ease-in-out infinite;
+}
+
+.rostro-svg { width: 3.4rem; height: 3.4rem; }
+
+/* Las cuatro esquinas se dibujan con bordes. */
+.esquina {
+  position: absolute;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 3px solid var(--color-acento);
+  border-radius: 4px;
+  animation: parpadeo-esquinas 4s ease-in-out infinite;
+}
+
+.esquina-sup-izq  { top: -4px;    left: -4px;   border-right: 0;    border-bottom: 0; }
+.esquina-sup-der  { top: -4px;    right: -4px;  border-left: 0;     border-bottom: 0; }
+.esquina-inf-izq  { bottom: -4px; left: -4px;   border-right: 0;    border-top: 0; }
+.esquina-inf-der  { bottom: -4px; right: -4px;  border-left: 0;     border-top: 0; }
+
+@keyframes pulso-marco {
+  0%, 100% { transform: scale(1);    opacity: 0.85; }
+  50%      { transform: scale(1.04); opacity: 1; }
+}
+
+@keyframes parpadeo-esquinas {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+/* Datos de la tarjeta facial. */
+.tarjeta-facial-datos { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.tarjeta-facial-nombre { margin: 0; font-size: 1.1rem; font-weight: 700; }
+.tarjeta-facial-rol    { margin: 0; font-size: 0.85rem; color: #cbd5e1; }
+
+/* Chip "Acceso autorizado": rebote breve cada 5 s. */
+.chip-acceso {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-acento-suave);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 82, 82, 0.45);
+  animation: rebote-chip 5s ease-in-out infinite;
+}
+
+.chip-acceso-punto {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-acento-claro);
+  box-shadow: 0 0 8px var(--color-acento-claro);
+}
+
+@keyframes rebote-chip {
+  0%, 78%, 100% { transform: translateY(0); }
+  82%           { transform: translateY(-5px); }
+  86%           { transform: translateY(0); }
+  90%           { transform: translateY(-2px); }
+  94%           { transform: translateY(0); }
+}
+
+/* Slide 2: cifras de accesos. */
+.tarjeta-accesos-cifra {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-acento-claro);
+}
+
+.tarjeta-accesos-etiqueta {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.95rem;
+  color: #e2e8f0;
+}
+
+.tarjeta-accesos-detalle {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tarjeta-accesos-detalle li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+
+.tarjeta-accesos-detalle strong { color: #f9fafb; }
+
+/* Slide 3: mensaje de marca. */
+.tarjeta-marca-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.tarjeta-marca-logo { display: flex; color: var(--color-acento-claro); }
+.tarjeta-marca-logo svg { width: 1.7rem; height: 1.7rem; }
+
+.tarjeta-marca-titulo {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.tarjeta-marca-lema {
+  margin: 0.35rem 0 0;
+  font-size: 1.05rem;
+  color: #e2e8f0;
+}
+
+/* Puntos del carrusel. */
+.carrusel-puntos {
+  position: absolute;
+  left: 0;
+  bottom: -2rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.carrusel-punto {
+  width: 0.6rem;
+  height: 0.6rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.carrusel-punto:hover { background: rgba(255, 255, 255, 0.6); }
+
+.carrusel-punto.activo {
+  width: 1.4rem;
+  background: var(--color-acento);
+}
+
+/* ---------------------------------------------------------------------------
+   Formulario (derecha): panel oscuro, campos #151b2c y botón rojo. Se
+   anulan los estilos claros globales de .tarjeta solo dentro del login.
+   --------------------------------------------------------------------------- */
+.login-formulario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-fondo-oscuro);
+}
+
+/* Doble clase (.tarjeta.tarjeta-login): el .tarjeta global de estilos.css
+   (fondo blanco, sombra, padding) tiene la misma especificidad que
+   .tarjeta-login y, como estilos.css se importa después que este archivo
+   (ver main.jsx), ganaba él y dejaba el formulario sobre una tarjeta
+   blanca. Con la doble clase el override del login gana sin importar el
+   orden de importación. El resto de reglas (.tarjeta-login input, label,
+   button…) ya tenían más especificidad que los estilos globales. */
+.tarjeta.tarjeta-login {
+  max-width: 420px;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  gap: 1.1rem;
+  color: #f9fafb;
+}
+
+.tarjeta.tarjeta-login h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.55rem;
+  color: #ffffff;
+}
+
+.campo { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.tarjeta-login label {
+  padding: 0;
+  gap: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.tarjeta-login input {
+  background: var(--color-fondo-campo);
+  border: 1px solid var(--color-borde-campo);
+  border-radius: 10px;
+  color: #f9fafb;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.95rem;
+}
+
+.tarjeta-login input::placeholder { color: #64748b; }
+
+.tarjeta-login input:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px var(--color-acento-suave);
+}
+
+/* Campo de contraseña con el botón del ojo superpuesto. */
+.campo-password { position: relative; display: flex; }
+
+.campo-password input { width: 100%; padding-right: 2.9rem; }
+
+.boton-ojo {
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: #94a3b8;
+}
+
+.boton-ojo:hover { color: #f9fafb; }
+
+.boton-ojo:focus-visible {
+  outline: 2px solid var(--color-acento-claro);
+  outline-offset: 2px;
+}
+
+.boton-ojo svg { width: 1.25rem; height: 1.25rem; }
+
+/* Mensaje de error adaptado al fondo oscuro. */
+.tarjeta-login .mensaje-error {
+  background: rgba(229, 57, 53, 0.16);
+  border: 1px solid rgba(255, 82, 82, 0.4);
+  color: #fecaca;
+  border-radius: 10px;
+}
+
+/* Botón de envío: rojo con texto blanco (solo el de envío; el ojo se
+   estiló por separado). */
+.tarjeta-login button[type='submit'] {
+  background: var(--color-acento);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.75rem;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.tarjeta-login button[type='submit']:hover:not(:disabled) {
+  background: var(--color-acento-claro);
+}
+
+.tarjeta-login button[type='submit']:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.nota-ayuda {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+/* ---------------------------------------------------------------------------
+   Adaptación a pantallas pequeñas: se oculta el panel izquierdo y queda
+   solo el formulario a ancho completo.
+   --------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .pagina-login { grid-template-columns: 1fr; }
+  .login-panel  { display: none; }
+}
+
+/* Accesibilidad: si el usuario pide menos movimiento, se desactivan todas
+   las animaciones y transiciones de esta pantalla. */
+@media (prefers-reduced-motion: reduce) {
+  .pagina-login *,
+  .pagina-login *::before,
+  .pagina-login *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Sin transición, el slide activo debe quedar visible igual. */
+  .carrusel-diapositiva { transform: translateY(-50%); }
+}
