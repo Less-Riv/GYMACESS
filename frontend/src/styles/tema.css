@@ -13,7 +13,7 @@
   --color-tarjeta: #111827;        /* tarjetas sobre fondo oscuro */
   --color-borde-tarjeta: #1f2937;  /* borde de tarjetas y separadores */
   --color-fondo-campo: #151b2c;    /* campos de formulario */
-  --color-fondo-cabecera: #0f172a; /* cabecera de tabla */
+  --color-fondo-cabecera: #0f172a; /* cabecera de tabla y barra superior */
   --color-borde-campo: rgba(255, 255, 255, 0.14);
 
   /* Texto */
@@ -25,6 +25,599 @@
   --color-exito-suave: rgba(74, 222, 128, 0.12);
   --color-error-suave: rgba(229, 57, 53, 0.16);
   --color-error-texto: #fca5a5;
+}
+
+/* ===========================================================================
+   CLASES REUTILIZABLES DE LAS PANTALLAS OSCURAS
+   Cualquier pantalla nueva se arma con:
+     .pagina                → fondo oscuro con el degradado rojo sutil
+     EncabezadoPagina.jsx   → barra con marca GymAccess + "Volver al inicio"
+     .contenido-pagina      → contenedor centrado (1100px; .ancho = 1200px)
+     .tarjeta-oscura        → tarjetas
+     .tabla-oscura          → tablas dentro de .tabla-contenedor (scroll-x)
+     .campo / .formulario   → formularios (siempre dentro de una tarjeta)
+     .chip + .chip-*        → estados y roles con color
+     .alerta-error/exito/info + .boton-reintentar → avisos con reintentos
+     .boton-primario / .boton-secundario / .boton-mini → acciones
+   Los colores siempre salen de las variables de arriba.
+   =========================================================================== */
+
+/* --- Estructura de página ------------------------------------------------- */
+.pagina {
+  min-height: 100vh;
+  background:
+    radial-gradient(90rem 50rem at -10% -15%, rgba(127, 29, 29, 0.18), transparent 60%),
+    var(--color-fondo-oscuro);
+  color: var(--color-texto);
+  color-scheme: dark;
+}
+
+.contenido-pagina {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Modificador para tablas anchas (1200px). */
+.contenido-pagina.ancho { max-width: 1200px; }
+
+/* --- Encabezado compartido (EncabezadoPagina.jsx) ------------------------- */
+.barra-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.9rem 2rem;
+  background: var(--color-fondo-cabecera);
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+}
+
+.barra-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.barra-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  background: var(--color-acento);
+  color: #ffffff;
+}
+
+.barra-logo svg { width: 1.15rem; height: 1.15rem; }
+
+.barra-marca {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.barra-marca-acento { color: var(--color-acento-claro); }
+
+.barra-separador {
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-borde-tarjeta);
+}
+
+.barra-titulo {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* Acciones de la barra (hijos opcionales + "Volver al inicio"). */
+.barra-acciones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* --- Tarjetas ------------------------------------------------------------- */
+.tarjeta-oscura {
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde-tarjeta);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.tarjeta-oscura h2 {
+  margin: 0 0 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* Subtítulo de sección dentro de una tarjeta (p. ej. "Ejercicios"). */
+.tarjeta-oscura h3 {
+  margin: 0 0 0.9rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+/* --- Botones -------------------------------------------------------------- */
+.boton-secundario {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.boton-secundario:hover {
+  border-color: var(--color-acento);
+  color: var(--color-acento-claro);
+  background: var(--color-acento-suave);
+}
+
+.boton-primario {
+  padding: 0.7rem 1.3rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--color-acento);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.1s ease;
+}
+
+.boton-primario:hover:not(:disabled) { background: var(--color-acento-claro); }
+.boton-primario:active:not(:disabled) { transform: translateY(1px); }
+
+/* Modificador para botones que ocupan todo el ancho (formularios). */
+.boton-ancho { width: 100%; }
+
+.boton-mini {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-borde-campo);
+  border-radius: 8px;
+  background: var(--color-fondo-campo);
+  color: var(--color-texto);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.boton-mini:hover {
+  border-color: var(--color-acento);
+  color: var(--color-acento-claro);
+}
+
+.boton-reintentar {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(255, 82, 82, 0.5);
+  border-radius: 8px;
+  background: transparent;
+  color: #fecaca;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.boton-reintentar:hover {
+  background: rgba(229, 57, 53, 0.25);
+  border-color: var(--color-acento-claro);
+}
+
+/* --- Formularios (siempre dentro de una .tarjeta-oscura) ------------------- */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 560px; /* la ficha de alta/edición no necesita todo el ancho */
+}
+
+/* Fila de acciones sueltas (p. ej. el botón que abre el alta de una
+   tabla) y fila de botones de un formulario (Guardar / Cancelar). */
+.acciones-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.tarjeta-oscura .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tarjeta-oscura .campo label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+}
+
+.tarjeta-oscura .campo input,
+.tarjeta-oscura .campo select,
+.tarjeta-oscura .campo textarea {
+  background: var(--color-fondo-campo);
+  border: 1px solid var(--color-borde-campo);
+  border-radius: 10px;
+  color: var(--color-texto);
+  padding: 0.65rem 0.8rem;
+  font-size: 0.95rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tarjeta-oscura .campo input:focus,
+.tarjeta-oscura .campo select:focus,
+.tarjeta-oscura .campo textarea:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px var(--color-acento-suave);
+}
+
+/* El área de texto hereda la tipografía y solo se estira en vertical. */
+.tarjeta-oscura .campo textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.tarjeta-oscura .campo input::placeholder { color: #64748b; }
+
+.campo-ayuda {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-texto-suave);
+}
+
+/* Fila de botones de un formulario (Guardar / Cancelar). */
+.form-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Formulario de asignación de entrenador (AsignarEntrenador.jsx). */
+.form-asignacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.form-asignacion .campo { min-width: 18rem; }
+
+/* Texto con etiqueta en negrita dentro de una tarjeta (p. ej. "Actual:"). */
+.dato-texto {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  color: #cbd5e1;
+  line-height: 1.55;
+}
+
+.dato-texto strong { color: var(--color-texto); }
+
+/* Texto introductorio o de ayuda directamente sobre la página. */
+.texto-guia {
+  margin: 0;
+  max-width: 65ch;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-texto-suave);
+}
+
+/* --- Avisos --------------------------------------------------------------- */
+.alerta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.alerta svg {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.alerta-texto { flex: 1; }
+
+.alerta-exito {
+  background: var(--color-exito-suave);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: var(--color-exito);
+}
+
+.alerta-error {
+  background: var(--color-error-suave);
+  border: 1px solid rgba(255, 82, 82, 0.45);
+  color: var(--color-error-texto);
+}
+
+/* Aviso neutro para mensajes de carga o de información. */
+.alerta-info {
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: #cbd5e1;
+}
+
+/* --- Estados vacío y carga ------------------------------------------------ */
+.estado-vacio {
+  margin: 0;
+  padding: 1.75rem 0.5rem;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.cargando {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+/* --- Listados (cabecera de tarjeta con contador) --------------------------- */
+.listado-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.listado-cabecera h2 { margin: 0; }
+
+.listado-total {
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: var(--color-fondo-campo);
+  border: 1px solid var(--color-borde-campo);
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* --- Filtros (campos en fila sobre una tarjeta) ---------------------------- */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+}
+
+.filtros .campo { min-width: 12rem; }
+
+/* --- Tablas (siempre dentro de .tabla-contenedor en una tarjeta) ----------- */
+.tabla-contenedor { overflow-x: auto; }
+
+.tabla-oscura {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+.tabla-oscura th {
+  background: var(--color-fondo-cabecera);
+  color: var(--color-texto-suave);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+  white-space: nowrap;
+}
+
+.tabla-oscura th:first-child { border-top-left-radius: 10px; }
+.tabla-oscura th:last-child  { border-top-right-radius: 10px; }
+
+.tabla-oscura td {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--color-texto);
+  border-bottom: 1px solid var(--color-borde-tarjeta);
+  vertical-align: middle;
+}
+
+.tabla-oscura tbody tr { transition: background 0.18s ease; }
+
+.tabla-oscura tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+.tabla-oscura tbody tr:last-child td { border-bottom: 0; }
+
+/* Fila de estado vacío (p. ej. "No hay registros…"). */
+.tabla-oscura td[colspan] {
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+/* --- Chips de estado ------------------------------------------------------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--color-texto-suave);
+  white-space: nowrap;
+}
+
+/* Verde tenue: activo, vigente y autorizado. */
+.chip-activo,
+.chip-vigente,
+.chip-autorizado {
+  background: var(--color-exito-suave);
+  border-color: rgba(74, 222, 128, 0.35);
+  color: var(--color-exito);
+}
+
+/* Rojo tenue: rechazado y vencida. */
+.chip-rechazado,
+.chip-vencida {
+  background: var(--color-error-suave);
+  border-color: rgba(255, 82, 82, 0.45);
+  color: var(--color-error-texto);
+}
+
+/* Ámbar: suspendida y pendiente. */
+.chip-suspendida,
+.chip-pendiente {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+}
+
+/* Azul tenue: en curso. */
+.chip-en-curso {
+  background: rgba(96, 165, 250, 0.15);
+  border-color: rgba(96, 165, 250, 0.4);
+  color: #93c5fd;
+}
+
+/* Violeta tenue: cancelada. */
+.chip-cancelada {
+  background: rgba(167, 139, 250, 0.15);
+  border-color: rgba(167, 139, 250, 0.4);
+  color: #c4b5fd;
+}
+
+/* Gris: inactivo. */
+.chip-inactivo {
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.3);
+  color: var(--color-texto-suave);
+}
+
+/* --- Indicadores (dashboard) ----------------------------------------------- */
+/* Rejilla de tarjetas de indicador (una o más por fila según el ancho). */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.tarjeta-indicador {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-borde-tarjeta);
+  border-radius: 12px;
+  background: var(--color-fondo-campo);
+  text-align: center;
+}
+
+.tarjeta-indicador .indicador-etiqueta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.tarjeta-indicador .indicador-valor {
+  margin: 0.25rem 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-texto);
+}
+
+.tarjeta-indicador .indicador-sufijo { font-size: 1rem; }
+
+/* --- Enlaces de acción ------------------------------------------------------ */
+.enlace {
+  color: var(--color-acento-claro);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.enlace:hover { text-decoration: underline; }
+
+/* --- Modal de confirmación (ModalConfirmacion.jsx) -------------------------- */
+.modal-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-caja {
+  max-width: 420px;
+  width: calc(100% - 2rem);
+}
+
+.modal-mensaje {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.modal-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+/* --- Captura facial (CapturaFacial.jsx) -------------------------------------- */
+.captura {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 480px;
+}
+
+.captura-ayuda {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-texto-suave);
+}
+
+.captura-ayuda strong { color: var(--color-texto); }
+
+.captura-visor {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  background: #000;
+}
+
+.captura-canvas { display: none; }
+
+/* --- Foco visible para teclado ----------------------------------------------- */
+.boton-secundario:focus-visible,
+.boton-primario:focus-visible,
+.boton-mini:focus-visible,
+.boton-reintentar:focus-visible,
+.enlace:focus-visible {
+  outline: 2px solid var(--color-acento-claro);
+  outline-offset: 2px;
+}
+
+/* --- Adaptación a pantallas pequeñas ------------------------------------------- */
+@media (max-width: 640px) {
+  .barra-superior { padding: 0.9rem 1.25rem; }
+  .contenido-pagina { padding: 1.25rem 1.25rem 2.5rem; }
+  .filtros .campo { min-width: 100%; }
 }
 
 /* Accesibilidad global: si el usuario pide menos movimiento, se desactivan

@@ -4,10 +4,15 @@
 //   efectivo y transferencia (clarificación Q2); admite pagos parciales.
 // - Adeudos: solo administrador (US-S2-05, FR-007); el saldo es precio vigente
 //   del tipo menos pagos registrados, nunca negativo.
+// La lógica no cambia: mismos estados, mismas llamadas (opciones del
+// formulario, POST /pagos, GET /pagos?cliente_id=, GET /pagos/adeudos) y los
+// mismos permisos por rol; solo se rediseña la presentación con el tema
+// oscuro compartido (patrón de Usuarios.jsx).
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { pedir } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import EncabezadoPagina from '../components/EncabezadoPagina.jsx';
+import { IconoAlerta, IconoExito } from '../components/iconos.jsx';
 
 const VACIO = { id_cliente: '', id_membresia: '', monto: '', metodo_pago: 'efectivo' };
 
@@ -122,144 +127,187 @@ export default function Pagos() {
   }
 
   return (
-    <main style={{ padding: '2rem', maxWidth: 1000, margin: '0 auto' }}>
-      <h1>Pagos</h1>
-      <p>
-        <Link to="/">Volver al inicio</Link>
-      </p>
+    <main className="pagina pagina-pagos">
+      <EncabezadoPagina titulo="Pagos" />
 
-      {mensaje && <p className="mensaje-exito">{mensaje}</p>}
-      {error && <p className="mensaje-error">{error}</p>}
+      <div className="contenido-pagina">
+        {mensaje && (
+          <div className="alerta alerta-exito" role="status">
+            <IconoExito />
+            <span className="alerta-texto">{mensaje}</span>
+          </div>
+        )}
 
-      {puedeRegistrar && (
-        <>
-          <button onClick={() => setMostrarAlta((valor) => !valor)}>
-            {mostrarAlta ? 'Ocultar formulario' : 'Registrar pago'}
-          </button>
+        {error && (
+          <div className="alerta alerta-error" role="alert">
+            <IconoAlerta />
+            <span className="alerta-texto">{error}</span>
+            <button type="button" className="boton-reintentar" onClick={cargarAdeudos}>
+              Reintentar
+            </button>
+          </div>
+        )}
 
-          {mostrarAlta && (
-            <form
-              onSubmit={registrar}
-              style={{ marginTop: '1rem', display: 'grid', gap: '0.5rem', maxWidth: 420 }}
-            >
-              <label>
-                Cliente
-                <select
-                  value={formulario.id_cliente}
-                  onChange={(e) => cambiar('id_cliente', e.target.value)}
-                  required
-                >
-                  <option value="">Seleccione un cliente</option>
-                  {clientes.map((cliente) => (
-                    <option key={cliente.id_cliente} value={cliente.id_cliente}>
-                      {cliente.nombre} {cliente.apellido}
-                    </option>
+        {puedeRegistrar && (
+          <>
+            <div className="acciones-fila">
+              <button
+                type="button"
+                className="boton-primario"
+                onClick={() => setMostrarAlta((valor) => !valor)}
+              >
+                {mostrarAlta ? 'Ocultar formulario' : 'Registrar pago'}
+              </button>
+            </div>
+
+            {mostrarAlta && (
+              <form className="tarjeta-oscura formulario" onSubmit={registrar}>
+                <h2>Registrar pago</h2>
+                <div className="campo">
+                  <label htmlFor="pago-cliente">Cliente</label>
+                  <select
+                    id="pago-cliente"
+                    value={formulario.id_cliente}
+                    onChange={(e) => cambiar('id_cliente', e.target.value)}
+                    required
+                  >
+                    <option value="">Seleccione un cliente</option>
+                    {clientes.map((cliente) => (
+                      <option key={cliente.id_cliente} value={cliente.id_cliente}>
+                        {cliente.nombre} {cliente.apellido}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="campo">
+                  <label htmlFor="pago-membresia">Membresía</label>
+                  <select
+                    id="pago-membresia"
+                    value={formulario.id_membresia}
+                    onChange={(e) => cambiar('id_membresia', e.target.value)}
+                    required
+                  >
+                    <option value="">Seleccione la membresía</option>
+                    {membresias.map((membresia) => (
+                      <option key={membresia.id_membresia} value={membresia.id_membresia}>
+                        {membresia.tipo} ({membresia.fecha_inicio} a {membresia.fecha_fin})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="campo">
+                  <label htmlFor="pago-monto">Monto</label>
+                  <input
+                    id="pago-monto"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={formulario.monto}
+                    onChange={(e) => cambiar('monto', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="campo">
+                  <label htmlFor="pago-metodo">Método de pago</label>
+                  <select
+                    id="pago-metodo"
+                    value={formulario.metodo_pago}
+                    onChange={(e) => cambiar('metodo_pago', e.target.value)}
+                    required
+                  >
+                    <option value="efectivo">Efectivo</option>
+                    <option value="transferencia">Transferencia</option>
+                  </select>
+                </div>
+                <div className="form-acciones">
+                  <button type="submit" className="boton-primario">
+                    Registrar pago
+                  </button>
+                </div>
+              </form>
+            )}
+          </>
+        )}
+
+        {historial.length > 0 && (
+          <section className="tarjeta-oscura">
+            <div className="listado-cabecera">
+              <h2>Historial de pagos</h2>
+              <span className="listado-total">{historial.length}</span>
+            </div>
+            <div className="tabla-contenedor">
+              <table className="tabla-oscura">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Método</th>
+                    <th>Membresía</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {historial.map((pago) => (
+                    <tr key={pago.id_pago}>
+                      <td>
+                        {pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleString() : '—'}
+                      </td>
+                      <td>${pago.monto}</td>
+                      <td>{pago.metodo_pago}</td>
+                      <td>{pago.tipo_membresia || pago.id_membresia}</td>
+                    </tr>
                   ))}
-                </select>
-              </label>
-              <label>
-                Membresía
-                <select
-                  value={formulario.id_membresia}
-                  onChange={(e) => cambiar('id_membresia', e.target.value)}
-                  required
-                >
-                  <option value="">Seleccione la membresía</option>
-                  {membresias.map((membresia) => (
-                    <option key={membresia.id_membresia} value={membresia.id_membresia}>
-                      {membresia.tipo} ({membresia.fecha_inicio} a {membresia.fecha_fin})
-                    </option>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {esAdministrador && (
+          <section className="tarjeta-oscura">
+            <div className="listado-cabecera">
+              <h2>Adeudos por cliente</h2>
+              <span className="listado-total">{adeudos.length}</span>
+            </div>
+            <div className="tabla-contenedor">
+              <table className="tabla-oscura">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Precio de la membresía</th>
+                    <th>Total pagado</th>
+                    <th>Saldo pendiente</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adeudos.map((adeudo) => (
+                    <tr key={adeudo.id_cliente}>
+                      <td>{adeudo.nombre_completo}</td>
+                      <td>${adeudo.precio_membresia}</td>
+                      <td>${adeudo.total_pagado}</td>
+                      <td>${adeudo.saldo_pendiente}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="boton-mini"
+                          onClick={() => verHistorial(adeudo)}
+                        >
+                          Ver historial
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </select>
-              </label>
-              <label>
-                Monto
-                <input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={formulario.monto}
-                  onChange={(e) => cambiar('monto', e.target.value)}
-                  required
-                />
-              </label>
-              <label>
-                Método de pago
-                <select
-                  value={formulario.metodo_pago}
-                  onChange={(e) => cambiar('metodo_pago', e.target.value)}
-                  required
-                >
-                  <option value="efectivo">Efectivo</option>
-                  <option value="transferencia">Transferencia</option>
-                </select>
-              </label>
-              <button type="submit">Registrar pago</button>
-            </form>
-          )}
-        </>
-      )}
-
-      {historial.length > 0 && (
-        <section style={{ marginTop: '2rem' }}>
-          <h2>Historial de pagos</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Monto</th>
-                <th>Método</th>
-                <th>Membresía</th>
-              </tr>
-            </thead>
-            <tbody>
-              {historial.map((pago) => (
-                <tr key={pago.id_pago}>
-                  <td>{pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleString() : '—'}</td>
-                  <td>${pago.monto}</td>
-                  <td>{pago.metodo_pago}</td>
-                  <td>{pago.tipo_membresia || pago.id_membresia}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      )}
-
-      {esAdministrador && (
-        <section style={{ marginTop: '2rem' }}>
-          <h2>Adeudos por cliente</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Precio de la membresía</th>
-                <th>Total pagado</th>
-                <th>Saldo pendiente</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {adeudos.map((adeudo) => (
-                <tr key={adeudo.id_cliente}>
-                  <td>{adeudo.nombre_completo}</td>
-                  <td>${adeudo.precio_membresia}</td>
-                  <td>${adeudo.total_pagado}</td>
-                  <td>${adeudo.saldo_pendiente}</td>
-                  <td>
-                    <button onClick={() => verHistorial(adeudo)}>Ver historial</button>
-                  </td>
-                </tr>
-              ))}
-              {adeudos.length === 0 && (
-                <tr>
-                  <td colSpan={5}>No hay clientes con membresías activas.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </section>
-      )}
+                  {adeudos.length === 0 && (
+                    <tr>
+                      <td colSpan={5}>No hay clientes con membresías activas.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+      </div>
     </main>
   );
 }

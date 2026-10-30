@@ -1,5 +1,8 @@
 // Formulario de alta y modificación de rutinas (T030, US3; FR-007, FR-008).
 // La lista de ejercicios se envía y se reemplaza en su conjunto (FR-008).
+// La lógica no cambia: mismos estados (nombre, descripcion, ejercicios),
+// mismas funciones limpiarEjercicio/cambiarEjercicio/quitarEjercicio y el
+// mismo envío; solo se rediseña la presentación con el tema oscuro.
 import { useState } from 'react';
 import EjercicioForm from './EjercicioForm.jsx';
 
@@ -51,27 +54,29 @@ export default function RutinaForm({ rutina, idCliente, onGuardar, onCancelar })
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: 'grid', gap: '0.5rem', marginTop: '1rem' }}>
+    <form className="tarjeta-oscura formulario" onSubmit={enviar}>
       <h2>{rutina ? 'Modificar rutina' : 'Nueva rutina'}</h2>
-      <label>
-        Nombre
+      <div className="campo">
+        <label htmlFor="rutina-nombre">Nombre</label>
         <input
+          id="rutina-nombre"
           type="text"
           value={nombre}
           maxLength={80}
           onChange={(ev) => setNombre(ev.target.value)}
           required
         />
-      </label>
-      <label>
-        Descripción
+      </div>
+      <div className="campo">
+        <label htmlFor="rutina-descripcion">Descripción</label>
         <input
+          id="rutina-descripcion"
           type="text"
           value={descripcion}
           maxLength={255}
           onChange={(ev) => setDescripcion(ev.target.value)}
         />
-      </label>
+      </div>
 
       <h3>Ejercicios</h3>
       {ejercicios.map((ejercicio, indice) => (
@@ -85,14 +90,17 @@ export default function RutinaForm({ rutina, idCliente, onGuardar, onCancelar })
       ))}
       <button
         type="button"
+        className="boton-secundario"
         onClick={() => setEjercicios((anterior) => [...anterior, { ...EJERCICIO_VACIO }])}
       >
         Agregar ejercicio
       </button>
 
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
-        <button type="submit">Guardar rutina</button>
-        <button type="button" onClick={onCancelar}>
+      <div className="form-acciones">
+        <button type="submit" className="boton-primario">
+          Guardar rutina
+        </button>
+        <button type="button" className="boton-secundario" onClick={onCancelar}>
           Cancelar
         </button>
       </div>

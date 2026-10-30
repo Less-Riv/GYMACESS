@@ -8,8 +8,11 @@
 //      imagen al backend (solo el descriptor numérico, research.md §6).
 //
 // Condiciones de captura (FR-025): luz frontal, sin contraluz y un solo rostro.
+// La lógica no cambia: mismos estados, misma carga de modelos y misma
+// captura; solo se rediseña la presentación con el tema oscuro compartido.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as faceapi from '@vladmandic/face-api';
+import { IconoAlerta } from './iconos.jsx';
 
 const RUTA_MODELOS = '/modelos-faciales';
 
@@ -108,23 +111,35 @@ export default function CapturaFacial({ onDescriptor, textoBoton = 'Capturar ros
   }
 
   return (
-    <div style={{ display: 'grid', gap: '0.5rem', maxWidth: 480 }}>
-      <p>
+    <div className="captura">
+      <p className="captura-ayuda">
         <strong>Condiciones de captura:</strong> luz frontal, evita el contraluz y asegúrate de
         que solo haya un rostro en el encuadre.
       </p>
 
-      <video
-        ref={videoRef}
-        muted
-        playsInline
-        style={{ width: '100%', borderRadius: 8, background: '#000' }}
-      />
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <video ref={videoRef} muted playsInline className="captura-visor" />
+      <canvas ref={canvasRef} className="captura-canvas" />
 
-      {mensaje && <p className="mensaje-error">{mensaje}</p>}
+      {/* Mientras carga es un aviso neutro; los fallos y las indicaciones de
+          captura se muestran como alerta de error. */}
+      {mensaje &&
+        (estado === 'cargando' ? (
+          <div className="alerta alerta-info" role="status">
+            <span className="alerta-texto">{mensaje}</span>
+          </div>
+        ) : (
+          <div className="alerta alerta-error" role="alert">
+            <IconoAlerta />
+            <span className="alerta-texto">{mensaje}</span>
+          </div>
+        ))}
 
-      <button type="button" onClick={capturar} disabled={estado !== 'listo'}>
+      <button
+        type="button"
+        className="boton-primario"
+        onClick={capturar}
+        disabled={estado !== 'listo'}
+      >
         {estado === 'cargando'
           ? 'Preparando…'
           : estado === 'capturando'

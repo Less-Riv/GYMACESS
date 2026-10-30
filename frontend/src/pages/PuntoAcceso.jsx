@@ -5,10 +5,15 @@
 // (RN-10).
 // Reintentos ilimitados (FR-011): si no se reconoce el rostro, el operador
 // puede capturar de nuevo tantas veces como necesite.
+// La lógica no cambia: mismos estados (resultado, error, enviando), misma
+// llamada POST /accesos/identificar, mismo textoMotivo y mismas condiciones
+// de render; solo se rediseña la presentación con el tema oscuro compartido.
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { pedir } from '../services/api.js';
 import CapturaFacial from '../components/CapturaFacial.jsx';
+import EncabezadoPagina from '../components/EncabezadoPagina.jsx';
+import { IconoAlerta, IconoExito } from '../components/iconos.jsx';
+import './PuntoAcceso.css';
 
 // Mensaje fijo exigido por la spec (FR-011).
 const MENSAJE_NO_RECONOCIDO =
@@ -60,46 +65,72 @@ export default function PuntoAcceso() {
   }
 
   return (
-    <main style={{ padding: '2rem', maxWidth: 600, margin: '0 auto' }}>
-      <h1>Punto de acceso</h1>
-      <p>
-        <Link to="/">Volver al inicio</Link>
-      </p>
+    <main className="pagina pagina-punto-acceso">
+      <EncabezadoPagina titulo="Punto de acceso" />
 
-      <p>
-        Presenta el rostro del cliente frente a la cámara. El intento queda registrado siempre,
-        tanto si se autoriza como si se rechaza.
-      </p>
+      <div className="contenido-pagina">
+        <p className="texto-guia">
+          Presenta el rostro del cliente frente a la cámara. El intento queda registrado
+          siempre, tanto si se autoriza como si se rechaza.
+        </p>
 
-      {error && <p className="mensaje-error">{error}</p>}
+        {error && (
+          <div className="alerta alerta-error" role="alert">
+            <IconoAlerta />
+            <span className="alerta-texto">{error}</span>
+            <button type="button" className="boton-reintentar" onClick={reiniciar}>
+              Reintentar
+            </button>
+          </div>
+        )}
 
-      {!resultado && <CapturaFacial onDescriptor={identificar} textoBoton="Identificar" />}
-      {enviando && <p>Identificando…</p>}
+        {!resultado && (
+          <section className="tarjeta-oscura tarjeta-captura">
+            <CapturaFacial onDescriptor={identificar} textoBoton="Identificar" />
+          </section>
+        )}
+        {enviando && <p className="cargando">Identificando…</p>}
 
-      {resultado && !enviando && (
-        <section className="tarjeta" style={{ marginTop: '1rem' }}>
-          {resultado.autorizado ? (
-            <>
-              <h2 style={{ color: 'green' }}>Acceso autorizado</h2>
-              <p>
-                <strong>Cliente:</strong> {resultado.cliente.nombre} {resultado.cliente.apellido}
-              </p>
-            </>
-          ) : (
-            <>
-              <h2 style={{ color: 'red' }}>Acceso rechazado</h2>
-              <p>{textoMotivo(resultado.motivo)}</p>
-              {resultado.cliente && (
-                <p>
-                  <strong>Cliente identificado:</strong> {resultado.cliente.nombre}{' '}
+        {resultado && !enviando && (
+          <section className="tarjeta-oscura tarjeta-resultado">
+            {resultado.autorizado ? (
+              <>
+                <div className="resultado resultado-ok">
+                  <span className="resultado-icono" aria-hidden="true">
+                    <IconoExito />
+                  </span>
+                  <h2 className="resultado-titulo">Acceso autorizado</h2>
+                </div>
+                <p className="dato-texto">
+                  <strong>Cliente:</strong> {resultado.cliente.nombre}{' '}
                   {resultado.cliente.apellido}
                 </p>
-              )}
-            </>
-          )}
-          <button onClick={reiniciar}>Nuevo intento</button>
-        </section>
-      )}
+              </>
+            ) : (
+              <>
+                <div className="resultado resultado-no">
+                  <span className="resultado-icono" aria-hidden="true">
+                    <IconoAlerta />
+                  </span>
+                  <h2 className="resultado-titulo">Acceso rechazado</h2>
+                </div>
+                <p className="dato-texto">{textoMotivo(resultado.motivo)}</p>
+                {resultado.cliente && (
+                  <p className="dato-texto">
+                    <strong>Cliente identificado:</strong> {resultado.cliente.nombre}{' '}
+                    {resultado.cliente.apellido}
+                  </p>
+                )}
+              </>
+            )}
+            <div className="acciones-fila">
+              <button type="button" className="boton-primario" onClick={reiniciar}>
+                Nuevo intento
+              </button>
+            </div>
+          </section>
+        )}
+      </div>
     </main>
   );
 }

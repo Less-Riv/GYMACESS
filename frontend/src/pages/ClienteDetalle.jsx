@@ -1,4 +1,8 @@
 // Detalle y modificación de un cliente (T057, US6; FR-010).
+// La lógica no cambia respecto de la versión anterior: mismos estados, mismas
+// llamadas (/clientes/:id, /rostros/:id, objetivos y progresos), mismas
+// validaciones y los mismos permisos por rol; solo se rediseña la
+// presentación con el tema oscuro compartido (patrón de Usuarios.jsx).
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { pedir, listarObjetivos, listarProgresos } from '../services/api.js';
@@ -6,6 +10,23 @@ import { useAuth } from '../context/AuthContext.jsx';
 import ClienteForm from '../components/ClienteForm.jsx';
 import CapturaFacial from '../components/CapturaFacial.jsx';
 import AsignarEntrenador from '../components/AsignarEntrenador.jsx';
+import EncabezadoPagina from '../components/EncabezadoPagina.jsx';
+import { IconoAlerta, IconoExito } from '../components/iconos.jsx';
+import './Clientes.css';
+
+// Chip de estado según el valor del backend; los no previstos quedan con el
+// estilo neutro base del chip.
+const CLASES_ESTADO = {
+  activo: 'chip-activo',
+  inactivo: 'chip-inactivo',
+  completo: 'chip-activo',
+  completado: 'chip-activo',
+  pendiente: 'chip-suspendida',
+  cancelado: 'chip-cancelada',
+  cancelada: 'chip-cancelada',
+  vencida: 'chip-vencida',
+  suspendida: 'chip-suspendida',
+};
 
 export default function ClienteDetalle() {
   const { id } = useParams();
@@ -113,147 +134,222 @@ export default function ClienteDetalle() {
 
   if (!cliente) {
     return (
-      <main style={{ padding: '2rem' }}>
-        <p>Cargando…</p>
-        {error && <p className="mensaje-error">{error}</p>}
-        <Link to="/clientes">Volver al listado</Link>
+      <main className="pagina pagina-cliente-detalle">
+        <EncabezadoPagina titulo="Detalle del cliente">
+          <Link to="/clientes" className="boton-secundario">
+            Volver al listado
+          </Link>
+        </EncabezadoPagina>
+
+        <div className="contenido-pagina">
+          <p className="cargando">Cargando…</p>
+          {error && (
+            <div className="alerta alerta-error" role="alert">
+              <IconoAlerta />
+              <span className="alerta-texto">{error}</span>
+              <button type="button" className="boton-reintentar" onClick={cargar}>
+                Reintentar
+              </button>
+            </div>
+          )}
+        </div>
       </main>
     );
   }
 
   return (
-    <main style={{ padding: '2rem', maxWidth: 600, margin: '0 auto' }}>
-      <h1>
-        {cliente.nombre} {cliente.apellido}
-      </h1>
-      <p>
-        <Link to="/clientes">Volver al listado</Link>
-      </p>
+    <main className="pagina pagina-cliente-detalle">
+      <EncabezadoPagina titulo={`${cliente.nombre} ${cliente.apellido}`}>
+        <Link to="/clientes" className="boton-secundario">
+          Volver al listado
+        </Link>
+      </EncabezadoPagina>
 
-      {mensaje && <p className="mensaje-exito">{mensaje}</p>}
+      <div className="contenido-pagina">
+        {mensaje && (
+          <div className="alerta alerta-exito" role="status">
+            <IconoExito />
+            <span className="alerta-texto">{mensaje}</span>
+          </div>
+        )}
 
-      {editando ? (
-        <ClienteForm
-          cliente={cliente}
-          onGuardar={modificarCliente}
-          onCancelar={() => setEditando(false)}
-        />
-      ) : (
-        <div className="tarjeta">
-          <p>
-            <strong>Correo:</strong> {cliente.correo}
-          </p>
-          <p>
-            <strong>Teléfono:</strong> {cliente.telefono || '—'}
-          </p>
-          <p>
-            <strong>Dirección:</strong> {cliente.direccion || '—'}
-          </p>
-          <p>
-            <strong>Estado:</strong> {cliente.estado}
-          </p>
-          <p>
-            <strong>Fecha de registro:</strong>{' '}
-            {cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString() : '—'}
-          </p>
-          {puedeModificar && (
-            <button onClick={() => setEditando(true)}>Modificar cliente</button>
-          )}
-        </div>
-      )}
-
-      {/* Registro facial (US-S2-06): solo administrador y recepcionista. */}
-      {puedeModificar && (
-        <section style={{ marginTop: '2rem' }}>
-          <h2>Registro facial</h2>
-          <p>
-            <strong>Estado:</strong> {rostro?.estado_registro || 'pendiente'}
-            {rostro?.fecha_registro
-              ? ` · registrado el ${new Date(rostro.fecha_registro).toLocaleDateString()}`
-              : ''}
-          </p>
-
-          {mostrarCaptura ? (
-            enviandoRostro ? (
-              <p>Enviando descriptor…</p>
-            ) : (
-              <CapturaFacial onDescriptor={guardarRostro} />
-            )
-          ) : (
-            <button onClick={() => setMostrarCaptura(true)}>
-              {rostro?.estado_registro === 'completo'
-                ? 'Volver a capturar el rostro'
-                : 'Registrar rostro'}
+        {error && (
+          <div className="alerta alerta-error" role="alert">
+            <IconoAlerta />
+            <span className="alerta-texto">{error}</span>
+            <button type="button" className="boton-reintentar" onClick={cargar}>
+              Reintentar
             </button>
+          </div>
+        )}
+
+        {editando ? (
+          <ClienteForm
+            cliente={cliente}
+            onGuardar={modificarCliente}
+            onCancelar={() => setEditando(false)}
+          />
+        ) : (
+          <section className="tarjeta-oscura">
+            <h2>Datos del cliente</h2>
+            <dl className="lista-datos">
+              <div className="dato-fila">
+                <dt>Correo:</dt>
+                <dd>{cliente.correo}</dd>
+              </div>
+              <div className="dato-fila">
+                <dt>Teléfono:</dt>
+                <dd>{cliente.telefono || '—'}</dd>
+              </div>
+              <div className="dato-fila">
+                <dt>Dirección:</dt>
+                <dd>{cliente.direccion || '—'}</dd>
+              </div>
+              <div className="dato-fila">
+                <dt>Estado:</dt>
+                <dd>
+                  <span className={`chip ${CLASES_ESTADO[cliente.estado] || ''}`}>
+                    {cliente.estado}
+                  </span>
+                </dd>
+              </div>
+              <div className="dato-fila">
+                <dt>Fecha de registro:</dt>
+                <dd>
+                  {cliente.fecha_registro
+                    ? new Date(cliente.fecha_registro).toLocaleDateString()
+                    : '—'}
+                </dd>
+              </div>
+            </dl>
+            {puedeModificar && (
+              <div className="acciones-fila">
+                <button
+                  type="button"
+                  className="boton-primario"
+                  onClick={() => setEditando(true)}
+                >
+                  Modificar cliente
+                </button>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Registro facial (US-S2-06): solo administrador y recepcionista. */}
+        {puedeModificar && (
+          <section className="tarjeta-oscura">
+            <h2>Registro facial</h2>
+            <p className="dato-texto">
+              <strong>Estado:</strong>{' '}
+              <span
+                className={`chip ${CLASES_ESTADO[rostro?.estado_registro || 'pendiente'] || ''}`}
+              >
+                {rostro?.estado_registro || 'pendiente'}
+              </span>
+              {rostro?.fecha_registro
+                ? ` · registrado el ${new Date(rostro.fecha_registro).toLocaleDateString()}`
+                : ''}
+            </p>
+
+            {mostrarCaptura ? (
+              enviandoRostro ? (
+                <p className="cargando">Enviando descriptor…</p>
+              ) : (
+                <CapturaFacial onDescriptor={guardarRostro} />
+              )
+            ) : (
+              <div className="acciones-fila">
+                <button
+                  type="button"
+                  className="boton-primario"
+                  onClick={() => setMostrarCaptura(true)}
+                >
+                  {rostro?.estado_registro === 'completo'
+                    ? 'Volver a capturar el rostro'
+                    : 'Registrar rostro'}
+                </button>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Asignación de entrenador (US-S3-02): administrador y recepcionista. */}
+        {puedeModificar && <AsignarEntrenador idCliente={id} />}
+
+        {/* Rutinas del cliente (US-S3-03): enlace al módulo filtrado. */}
+        {puedeModificar && (
+          <p className="fila-enlace">
+            <Link className="enlace" to={`/rutinas?cliente_id=${id}`}>
+              Ver rutinas de este cliente
+            </Link>
+          </p>
+        )}
+
+        {/* Seguimiento (US-S3-04): objetivos y histórico de progresos en modo
+            lectura; el registro es del entrenador de la carga (RN-19). */}
+        <section className="tarjeta-oscura">
+          <h2>Objetivos de entrenamiento</h2>
+          {seguimiento.objetivos.length === 0 ? (
+            <p className="estado-vacio">Sin objetivos registrados.</p>
+          ) : (
+            <div className="tabla-contenedor">
+              <table className="tabla-oscura">
+                <thead>
+                  <tr>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Fecha objetivo</th>
+                    <th>Cierre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {seguimiento.objetivos.map((objetivo) => (
+                    <tr key={objetivo.id_objetivo}>
+                      <td>{objetivo.descripcion}</td>
+                      <td>
+                        <span className={`chip ${CLASES_ESTADO[objetivo.estado] || ''}`}>
+                          {objetivo.estado}
+                        </span>
+                      </td>
+                      <td>{objetivo.fecha_objetivo || '—'}</td>
+                      <td>{objetivo.fecha_cierre || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <h2 className="subtitulo-seccion">Histórico de progresos</h2>
+          {seguimiento.progresos.length === 0 ? (
+            <p className="estado-vacio">Sin progresos registrados.</p>
+          ) : (
+            <div className="tabla-contenedor">
+              <table className="tabla-oscura">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Comentario</th>
+                    <th>Peso</th>
+                    <th>Cintura</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {seguimiento.progresos.map((progreso) => (
+                    <tr key={progreso.id_progreso}>
+                      <td>{progreso.fecha}</td>
+                      <td>{progreso.comentario}</td>
+                      <td>{progreso.peso ? `${progreso.peso} kg` : '—'}</td>
+                      <td>{progreso.cintura ? `${progreso.cintura} cm` : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </section>
-      )}
-
-      {/* Asignación de entrenador (US-S3-02): administrador y recepcionista. */}
-      {puedeModificar && <AsignarEntrenador idCliente={id} />}
-
-      {/* Rutinas del cliente (US-S3-03): enlace al módulo filtrado. */}
-      {puedeModificar && (
-        <p style={{ marginTop: '1rem' }}>
-          <Link to={`/rutinas?cliente_id=${id}`}>Ver rutinas de este cliente</Link>
-        </p>
-      )}
-
-      {/* Seguimiento (US-S3-04): objetivos y histórico de progresos en modo
-          lectura; el registro es del entrenador de la carga (RN-19). */}
-      <section style={{ marginTop: '2rem' }}>
-        <h2>Objetivos de entrenamiento</h2>
-        {seguimiento.objetivos.length === 0 ? (
-          <p>Sin objetivos registrados.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Descripción</th>
-                <th>Estado</th>
-                <th>Fecha objetivo</th>
-                <th>Cierre</th>
-              </tr>
-            </thead>
-            <tbody>
-              {seguimiento.objetivos.map((objetivo) => (
-                <tr key={objetivo.id_objetivo}>
-                  <td>{objetivo.descripcion}</td>
-                  <td>{objetivo.estado}</td>
-                  <td>{objetivo.fecha_objetivo || '—'}</td>
-                  <td>{objetivo.fecha_cierre || '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <h2>Histórico de progresos</h2>
-        {seguimiento.progresos.length === 0 ? (
-          <p>Sin progresos registrados.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Comentario</th>
-                <th>Peso</th>
-                <th>Cintura</th>
-              </tr>
-            </thead>
-            <tbody>
-              {seguimiento.progresos.map((progreso) => (
-                <tr key={progreso.id_progreso}>
-                  <td>{progreso.fecha}</td>
-                  <td>{progreso.comentario}</td>
-                  <td>{progreso.peso ? `${progreso.peso} kg` : '—'}</td>
-                  <td>{progreso.cintura ? `${progreso.cintura} cm` : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      </div>
     </main>
   );
 }

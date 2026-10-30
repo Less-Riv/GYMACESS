@@ -1,0 +1,49 @@
+/* Layout de la pantalla "Punto de acceso" (tema oscuro).
+   Encabezado, tarjetas, alertas y botones vienen de src/styles/tema.css;
+   aquí va lo particular de esta página: columna angosta, tarjeta de la
+   cámara y la bandera grande de resultado (verde o rojo). */
+
+/* La página es angosta como en su versión original (600px de contenido). */
+.pagina-punto-acceso .contenido-pagina { max-width: 640px; }
+
+/* El visor de cámara se centra dentro de su tarjeta oscura. */
+.pagina-punto-acceso .tarjeta-captura .captura { margin: 0 auto; }
+
+/* Bandera de resultado: grande, centrada y con color de estado. */
+.pagina-punto-acceso .resultado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1rem;
+  margin-bottom: 1.1rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.pagina-punto-acceso .resultado-titulo {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.pagina-punto-acceso .resultado-icono {
+  display: inline-flex;
+}
+
+.pagina-punto-acceso .resultado-icono svg {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.pagina-punto-acceso .resultado-ok {
+  background: var(--color-exito-suave);
+  border-color: rgba(74, 222, 128, 0.45);
+  color: var(--color-exito);
+}
+
+.pagina-punto-acceso .resultado-no {
+  background: var(--color-error-suave);
+  border-color: rgba(255, 82, 82, 0.5);
+  color: var(--color-error-texto);
+}

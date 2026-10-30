@@ -2,14 +2,19 @@
 // carga de clientes, alta y modificación para el administrador.
 // El backend valida los permisos (FR-025); el frontend solo refleja el
 // contrato de contracts/api-entrenadores-asignaciones.md.
+// La lógica no cambia: mismos estados, mismas funciones (abrirAlta,
+// abrirEdicion, cambiarCampo, guardar), mismas llamadas (listarEntrenadores,
+// crearEntrenador, modificarEntrenador) y los mismos permisos por rol; solo
+// se rediseña la presentación con el tema oscuro compartido.
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   listarEntrenadores,
   crearEntrenador,
   modificarEntrenador,
 } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import EncabezadoPagina from '../components/EncabezadoPagina.jsx';
+import { IconoAlerta, IconoExito } from '../components/iconos.jsx';
 
 const FORMULARIO_VACIO = {
   id_usuario: '',
@@ -17,6 +22,13 @@ const FORMULARIO_VACIO = {
   telefono: '',
   correo_contacto: '',
   estado: 'activo',
+};
+
+// Chip de estado según el valor del backend; los no previstos quedan con el
+// estilo neutro base del chip.
+const CLASES_ESTADO = {
+  activo: 'chip-activo',
+  inactivo: 'chip-inactivo',
 };
 
 export default function Entrenadores() {
@@ -96,122 +108,167 @@ export default function Entrenadores() {
   }
 
   return (
-    <main style={{ padding: '2rem', maxWidth: 900, margin: '0 auto' }}>
-      <h1>Entrenadores</h1>
-      <p>
-        <Link to="/">Volver al inicio</Link>
-      </p>
+    <main className="pagina pagina-entrenadores">
+      <EncabezadoPagina titulo="Entrenadores" />
 
-      {mensaje && <p className="mensaje-exito">{mensaje}</p>}
-      {error && <p className="mensaje-error">{error}</p>}
+      <div className="contenido-pagina">
+        {mensaje && (
+          <div className="alerta alerta-exito" role="status">
+            <IconoExito />
+            <span className="alerta-texto">{mensaje}</span>
+          </div>
+        )}
 
-      {usuario.rol === 'administrador' && (
-        <button onClick={abrirAlta}>Registrar entrenador</button>
-      )}
-
-      {(mostrarAlta || editando) && (
-        <form onSubmit={guardar} style={{ marginTop: '1rem', display: 'grid', gap: '0.5rem' }}>
-          <h2>{editando ? 'Modificar entrenador' : 'Nuevo entrenador'}</h2>
-
-          {!editando && (
-            <label>
-              Cuenta de usuario (id)
-              <input
-                type="number"
-                value={formulario.id_usuario}
-                onChange={(ev) => cambiarCampo('id_usuario', ev.target.value)}
-                required
-              />
-            </label>
-          )}
-          <label>
-            Nombre
-            <input
-              type="text"
-              value={formulario.nombre}
-              onChange={(ev) => cambiarCampo('nombre', ev.target.value)}
-              maxLength={80}
-              required
-            />
-          </label>
-          <label>
-            Teléfono
-            <input
-              type="text"
-              value={formulario.telefono}
-              onChange={(ev) => cambiarCampo('telefono', ev.target.value)}
-              maxLength={30}
-            />
-          </label>
-          <label>
-            Correo de contacto
-            <input
-              type="email"
-              value={formulario.correo_contacto}
-              onChange={(ev) => cambiarCampo('correo_contacto', ev.target.value)}
-              maxLength={120}
-            />
-          </label>
-          {editando && (
-            <label>
-              Estado
-              <select
-                value={formulario.estado}
-                onChange={(ev) => cambiarCampo('estado', ev.target.value)}
-              >
-                <option value="activo">activo</option>
-                <option value="inactivo">inactivo</option>
-              </select>
-            </label>
-          )}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button type="submit">{editando ? 'Guardar cambios' : 'Registrar'}</button>
-            <button
-              type="button"
-              onClick={() => {
-                setEditando(null);
-                setMostrarAlta(false);
-              }}
-            >
-              Cancelar
+        {error && (
+          <div className="alerta alerta-error" role="alert">
+            <IconoAlerta />
+            <span className="alerta-texto">{error}</span>
+            <button type="button" className="boton-reintentar" onClick={cargar}>
+              Reintentar
             </button>
           </div>
-        </form>
-      )}
+        )}
 
-      <table style={{ marginTop: '1.5rem' }}>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Correo de contacto</th>
-            <th>Clientes asignados</th>
-            <th>Estado</th>
-            {usuario.rol === 'administrador' && <th>Acción</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {entrenadores.map((entrenador) => (
-            <tr key={entrenador.id_entrenador}>
-              <td>{entrenador.nombre}</td>
-              <td>{entrenador.telefono || '—'}</td>
-              <td>{entrenador.correo_contacto || '—'}</td>
-              <td>{entrenador.clientes_asignados}</td>
-              <td>{entrenador.estado}</td>
-              {usuario.rol === 'administrador' && (
-                <td>
-                  <button onClick={() => abrirEdicion(entrenador)}>Modificar</button>
-                </td>
-              )}
-            </tr>
-          ))}
-          {entrenadores.length === 0 && (
-            <tr>
-              <td colSpan={6}>No hay entrenadores registrados.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+        {usuario.rol === 'administrador' && (
+          <div className="acciones-fila">
+            <button type="button" className="boton-primario" onClick={abrirAlta}>
+              Registrar entrenador
+            </button>
+          </div>
+        )}
+
+        {(mostrarAlta || editando) && (
+          <form className="tarjeta-oscura formulario" onSubmit={guardar}>
+            <h2>{editando ? 'Modificar entrenador' : 'Nuevo entrenador'}</h2>
+
+            {!editando && (
+              <div className="campo">
+                <label htmlFor="entrenador-cuenta">Cuenta de usuario (id)</label>
+                <input
+                  id="entrenador-cuenta"
+                  type="number"
+                  value={formulario.id_usuario}
+                  onChange={(ev) => cambiarCampo('id_usuario', ev.target.value)}
+                  required
+                />
+              </div>
+            )}
+            <div className="campo">
+              <label htmlFor="entrenador-nombre">Nombre</label>
+              <input
+                id="entrenador-nombre"
+                type="text"
+                value={formulario.nombre}
+                onChange={(ev) => cambiarCampo('nombre', ev.target.value)}
+                maxLength={80}
+                required
+              />
+            </div>
+            <div className="campo">
+              <label htmlFor="entrenador-telefono">Teléfono</label>
+              <input
+                id="entrenador-telefono"
+                type="text"
+                value={formulario.telefono}
+                onChange={(ev) => cambiarCampo('telefono', ev.target.value)}
+                maxLength={30}
+              />
+            </div>
+            <div className="campo">
+              <label htmlFor="entrenador-correo">Correo de contacto</label>
+              <input
+                id="entrenador-correo"
+                type="email"
+                value={formulario.correo_contacto}
+                onChange={(ev) => cambiarCampo('correo_contacto', ev.target.value)}
+                maxLength={120}
+              />
+            </div>
+            {editando && (
+              <div className="campo">
+                <label htmlFor="entrenador-estado">Estado</label>
+                <select
+                  id="entrenador-estado"
+                  value={formulario.estado}
+                  onChange={(ev) => cambiarCampo('estado', ev.target.value)}
+                >
+                  <option value="activo">activo</option>
+                  <option value="inactivo">inactivo</option>
+                </select>
+              </div>
+            )}
+            <div className="form-acciones">
+              <button type="submit" className="boton-primario">
+                {editando ? 'Guardar cambios' : 'Registrar'}
+              </button>
+              <button
+                type="button"
+                className="boton-secundario"
+                onClick={() => {
+                  setEditando(null);
+                  setMostrarAlta(false);
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        )}
+
+        <section className="tarjeta-oscura">
+          <div className="listado-cabecera">
+            <h2>Entrenadores registrados</h2>
+            <span className="listado-total">{entrenadores.length}</span>
+          </div>
+          <div className="tabla-contenedor">
+            <table className="tabla-oscura">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Teléfono</th>
+                  <th>Correo de contacto</th>
+                  <th>Clientes asignados</th>
+                  <th>Estado</th>
+                  {usuario.rol === 'administrador' && <th>Acción</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {entrenadores.map((entrenador) => (
+                  <tr key={entrenador.id_entrenador}>
+                    <td>{entrenador.nombre}</td>
+                    <td>{entrenador.telefono || '—'}</td>
+                    <td>{entrenador.correo_contacto || '—'}</td>
+                    <td>{entrenador.clientes_asignados}</td>
+                    <td>
+                      <span
+                        className={`chip ${CLASES_ESTADO[entrenador.estado] || ''}`}
+                      >
+                        {entrenador.estado}
+                      </span>
+                    </td>
+                    {usuario.rol === 'administrador' && (
+                      <td>
+                        <button
+                          type="button"
+                          className="boton-mini"
+                          onClick={() => abrirEdicion(entrenador)}
+                        >
+                          Modificar
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+                {entrenadores.length === 0 && (
+                  <tr>
+                    <td colSpan={6}>No hay entrenadores registrados.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

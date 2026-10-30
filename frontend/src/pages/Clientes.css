@@ -1,0 +1,65 @@
+/* Layout propio de las pantallas de Clientes y ClienteDetalle (tema oscuro).
+   El encabezado, las tarjetas, las tablas, los chips, los formularios,
+   las alertas y los botones vienen de src/styles/tema.css; aquí solo va el
+   layout particular de estas dos páginas (scopeado a sus clases). */
+
+/* --- Clientes (listado y alta) --------------------------------------------- */
+.pagina-clientes .paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagina-clientes .paginacion-texto {
+  color: var(--color-texto-suave);
+  font-size: 0.88rem;
+}
+
+/* --- ClienteDetalle (ficha de datos) ---------------------------------------- */
+.pagina-cliente-detalle .lista-datos {
+  margin: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.pagina-cliente-detalle .dato-fila {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  margin: 0;
+}
+
+.pagina-cliente-detalle .dato-fila dt {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pagina-cliente-detalle .dato-fila dd {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--color-texto);
+  overflow-wrap: anywhere;
+}
+
+.pagina-cliente-detalle .acciones-fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.pagina-cliente-detalle .fila-enlace { margin: 0; }
+
+/* Segundo título dentro de la tarjeta de seguimiento. */
+.pagina-cliente-detalle .subtitulo-seccion { margin-top: 2rem; }
+
+/* Las columnas de la ficha se apilan en pantallas angostas. */
+@media (max-width: 640px) {
+  .pagina-cliente-detalle .dato-fila {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}

@@ -1,7 +1,10 @@
 // Formulario de cliente reutilizable (T035 US2, T057 US6).
 // Obligatorios: nombre, apellido y correo; opcionales: teléfono y dirección
 // (aclaración 2026-10-09). La validación del backend es la autoridad.
+// La lógica no cambia: mismos estados, misma validación y mismos mensajes;
+// solo se rediseña la presentación con el tema oscuro compartido.
 import { useState } from 'react';
+import { IconoAlerta } from './iconos.jsx';
 
 const VACIO = { nombre: '', apellido: '', correo: '', telefono: '', direccion: '' };
 
@@ -35,39 +38,64 @@ export default function ClienteForm({ cliente, onGuardar, onCancelar }) {
   }
 
   return (
-    <form className="tarjeta" onSubmit={manejarEnvio}>
+    <form className="tarjeta-oscura formulario" onSubmit={manejarEnvio}>
       <h2>{cliente ? 'Modificar cliente' : 'Registrar cliente'}</h2>
-      <label>
-        Nombre *
-        <input value={datos.nombre} onChange={cambiar('nombre')} required />
-      </label>
-      <label>
-        Apellido *
-        <input value={datos.apellido} onChange={cambiar('apellido')} required />
-      </label>
-      <label>
-        Correo *
-        <input type="email" value={datos.correo} onChange={cambiar('correo')} required />
-      </label>
-      <label>
-        Teléfono
-        <input value={datos.telefono} onChange={cambiar('telefono')} />
-      </label>
-      <label>
-        Dirección
-        <input value={datos.direccion} onChange={cambiar('direccion')} />
-      </label>
+      <div className="campo">
+        <label htmlFor="cliente-nombre">Nombre *</label>
+        <input
+          id="cliente-nombre"
+          value={datos.nombre}
+          onChange={cambiar('nombre')}
+          required
+        />
+      </div>
+      <div className="campo">
+        <label htmlFor="cliente-apellido">Apellido *</label>
+        <input
+          id="cliente-apellido"
+          value={datos.apellido}
+          onChange={cambiar('apellido')}
+          required
+        />
+      </div>
+      <div className="campo">
+        <label htmlFor="cliente-correo">Correo *</label>
+        <input
+          id="cliente-correo"
+          type="email"
+          value={datos.correo}
+          onChange={cambiar('correo')}
+          required
+        />
+      </div>
+      <div className="campo">
+        <label htmlFor="cliente-telefono">Teléfono</label>
+        <input
+          id="cliente-telefono"
+          value={datos.telefono}
+          onChange={cambiar('telefono')}
+        />
+      </div>
+      <div className="campo">
+        <label htmlFor="cliente-direccion">Dirección</label>
+        <input
+          id="cliente-direccion"
+          value={datos.direccion}
+          onChange={cambiar('direccion')}
+        />
+      </div>
       {error && (
-        <p className="mensaje-error" role="alert">
-          {error}
-        </p>
+        <div className="alerta alerta-error" role="alert">
+          <IconoAlerta />
+          <span className="alerta-texto">{error}</span>
+        </div>
       )}
-      <div style={{ display: 'flex', gap: '1rem' }}>
-        <button type="submit" disabled={guardando}>
+      <div className="form-acciones">
+        <button type="submit" className="boton-primario" disabled={guardando}>
           {guardando ? 'Guardando…' : 'Guardar'}
         </button>
         {onCancelar && (
-          <button type="button" onClick={onCancelar} style={{ background: '#6b7280' }}>
+          <button type="button" className="boton-secundario" onClick={onCancelar}>
             Cancelar
           </button>
         )}

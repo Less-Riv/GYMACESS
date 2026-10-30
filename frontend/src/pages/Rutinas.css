@@ -1,0 +1,38 @@
+/* Layout de la pantalla "Rutinas" (tema oscuro). Encabezado, tarjetas,
+   formularios, tablas, chips y botones vienen de src/styles/tema.css;
+   aquí va lo particular de esta página y de sus paneles internos (RutinaForm,
+   EjercicioForm, ObjetivosPanel y RegistroProgreso, que solo se usan aquí):
+   celdas de acción con más de un botón, fieldsets oscuros y el formulario de
+   objetivos bajo su tabla. */
+
+/* Celda de la tabla con más de un botón de acción. */
+.pagina-rutinas .acciones-celda {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Formulario "Agregar objetivo" debajo de la tabla de objetivos. */
+.pagina-rutinas .filtros-formulario { margin-top: 1.25rem; }
+
+/* Fieldsets oscuros (ejercicios de la rutina y medidas del progreso). */
+.pagina-rutinas fieldset {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-borde-tarjeta);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.pagina-rutinas fieldset + fieldset { margin-top: 1rem; }
+
+.pagina-rutinas legend {
+  padding: 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-texto-suave);
+}
+
+.pagina-rutinas fieldset .campo + .campo { margin-top: 0.8rem; }
+
+.pagina-rutinas fieldset .boton-secundario { margin-top: 0.9rem; }

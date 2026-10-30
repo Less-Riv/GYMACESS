@@ -4,13 +4,31 @@
 // importes, ya proyectada por el backend).
 // La fecha de fin la calcula el backend con la duración del tipo (FR-002); el
 // formulario solo pide cliente, tipo y fecha de inicio.
+// La lógica no cambia: mismos estados, mismas llamadas (GET /membresias,
+// POST /membresias, PUT /membresias/:id/renovar, opciones del formulario) y
+// los mismos permisos por rol; solo se rediseña la presentación con el tema
+// oscuro compartido (patrón de Usuarios.jsx).
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { pedir } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import ModalConfirmacion from '../components/ModalConfirmacion.jsx';
+import EncabezadoPagina from '../components/EncabezadoPagina.jsx';
+import { IconoAlerta, IconoExito } from '../components/iconos.jsx';
 
 const VACIO = { id_cliente: '', id_tipo_membresia: '', fecha_inicio: '' };
+
+// Chip de estado según el valor calculado por el backend; los no previstos
+// quedan con el estilo neutro base del chip.
+const CLASES_ESTADO = {
+  vigente: 'chip-vigente',
+  activa: 'chip-activo',
+  activo: 'chip-activo',
+  vencida: 'chip-vencida',
+  vencido: 'chip-vencida',
+  suspendida: 'chip-suspendida',
+  cancelada: 'chip-cancelada',
+  inactivo: 'chip-inactivo',
+};
 
 export default function Membresias() {
   const { usuario } = useAuth();
@@ -115,115 +133,159 @@ export default function Membresias() {
   }
 
   return (
-    <main style={{ padding: '2rem', maxWidth: 1000, margin: '0 auto' }}>
-      <h1>Membresías</h1>
-      <p>
-        <Link to="/">Volver al inicio</Link>
-      </p>
+    <main className="pagina pagina-membresias">
+      <EncabezadoPagina titulo="Membresías" />
 
-      {mensaje && <p className="mensaje-exito">{mensaje}</p>}
-      {error && <p className="mensaje-error">{error}</p>}
+      <div className="contenido-pagina">
+        {mensaje && (
+          <div className="alerta alerta-exito" role="status">
+            <IconoExito />
+            <span className="alerta-texto">{mensaje}</span>
+          </div>
+        )}
 
-      {puedeGestionar && (
-        <button onClick={() => setMostrarAlta((valor) => !valor)}>
-          {mostrarAlta ? 'Ocultar formulario' : 'Asignar membresía'}
-        </button>
-      )}
+        {error && (
+          <div className="alerta alerta-error" role="alert">
+            <IconoAlerta />
+            <span className="alerta-texto">{error}</span>
+            <button type="button" className="boton-reintentar" onClick={cargar}>
+              Reintentar
+            </button>
+          </div>
+        )}
 
-      {mostrarAlta && (
-        <form
-          onSubmit={asignar}
-          style={{ marginTop: '1rem', display: 'grid', gap: '0.5rem', maxWidth: 420 }}
-        >
-          <label>
-            Cliente
-            <select
-              value={formulario.id_cliente}
-              onChange={(e) => cambiar('id_cliente', e.target.value)}
-              required
+        {puedeGestionar && (
+          <div className="acciones-fila">
+            <button
+              type="button"
+              className="boton-primario"
+              onClick={() => setMostrarAlta((valor) => !valor)}
             >
-              <option value="">Seleccione un cliente</option>
-              {clientes.map((cliente) => (
-                <option key={cliente.id_cliente} value={cliente.id_cliente}>
-                  {cliente.nombre} {cliente.apellido}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Tipo de membresía
-            <select
-              value={formulario.id_tipo_membresia}
-              onChange={(e) => cambiar('id_tipo_membresia', e.target.value)}
-              required
-            >
-              <option value="">Seleccione un tipo</option>
-              {tipos.map((tipo) => (
-                <option key={tipo.id_tipo_membresia} value={tipo.id_tipo_membresia}>
-                  {tipo.nombre} ({tipo.duracion} días, ${tipo.precio})
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Fecha de inicio
-            <input
-              type="date"
-              value={formulario.fecha_inicio}
-              onChange={(e) => cambiar('fecha_inicio', e.target.value)}
-              required
-            />
-          </label>
-          <button type="submit">Asignar</button>
-        </form>
-      )}
+              {mostrarAlta ? 'Ocultar formulario' : 'Asignar membresía'}
+            </button>
+          </div>
+        )}
 
-      <table style={{ marginTop: '1.5rem' }}>
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Tipo</th>
-            <th>Inicio</th>
-            <th>Fin</th>
-            <th>Estado</th>
-            {puedeGestionar && <th>Acción</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {datos.membresias.map((membresia) => (
-            <tr key={membresia.id_membresia}>
-              <td>
-                {membresia.cliente
-                  ? `${membresia.cliente.nombre} ${membresia.cliente.apellido}`
-                  : membresia.id_cliente}
-              </td>
-              <td>{membresia.tipo}</td>
-              <td>{membresia.fecha_inicio}</td>
-              <td>{membresia.fecha_fin}</td>
-              <td>{membresia.estado}</td>
-              {puedeGestionar && (
-                <td>
-                  <button onClick={() => setRenovando(membresia)}>Renovar</button>
-                </td>
-              )}
-            </tr>
-          ))}
-          {datos.membresias.length === 0 && (
-            <tr>
-              <td colSpan={puedeGestionar ? 6 : 5}>No hay membresías registradas.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+        {mostrarAlta && (
+          <form className="tarjeta-oscura formulario" onSubmit={asignar}>
+            <h2>Asignar membresía</h2>
+            <div className="campo">
+              <label htmlFor="memb-cliente">Cliente</label>
+              <select
+                id="memb-cliente"
+                value={formulario.id_cliente}
+                onChange={(e) => cambiar('id_cliente', e.target.value)}
+                required
+              >
+                <option value="">Seleccione un cliente</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id_cliente} value={cliente.id_cliente}>
+                    {cliente.nombre} {cliente.apellido}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="campo">
+              <label htmlFor="memb-tipo">Tipo de membresía</label>
+              <select
+                id="memb-tipo"
+                value={formulario.id_tipo_membresia}
+                onChange={(e) => cambiar('id_tipo_membresia', e.target.value)}
+                required
+              >
+                <option value="">Seleccione un tipo</option>
+                {tipos.map((tipo) => (
+                  <option key={tipo.id_tipo_membresia} value={tipo.id_tipo_membresia}>
+                    {tipo.nombre} ({tipo.duracion} días, ${tipo.precio})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="campo">
+              <label htmlFor="memb-fecha">Fecha de inicio</label>
+              <input
+                id="memb-fecha"
+                type="date"
+                value={formulario.fecha_inicio}
+                onChange={(e) => cambiar('fecha_inicio', e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-acciones">
+              <button type="submit" className="boton-primario">
+                Asignar
+              </button>
+            </div>
+          </form>
+        )}
 
-      {renovando && (
-        <ModalConfirmacion
-          titulo="Renovar membresía"
-          mensaje={`Se extenderá la vigencia de la membresía ${renovando.id_membresia} (${renovando.tipo}) sumando la duración del tipo elegido. ¿Continuar?`}
-          alConfirmar={confirmarRenovacion}
-          alCancelar={() => setRenovando(null)}
-        />
-      )}
+        <section className="tarjeta-oscura">
+          <div className="listado-cabecera">
+            <h2>Membresías registradas</h2>
+            <span className="listado-total">{datos.membresias.length}</span>
+          </div>
+          <div className="tabla-contenedor">
+            <table className="tabla-oscura">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Tipo</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Estado</th>
+                  {puedeGestionar && <th>Acción</th>}
+                </tr>
+              </thead>
+              <tbody>
+                {datos.membresias.map((membresia) => (
+                  <tr key={membresia.id_membresia}>
+                    <td>
+                      {membresia.cliente
+                        ? `${membresia.cliente.nombre} ${membresia.cliente.apellido}`
+                        : membresia.id_cliente}
+                    </td>
+                    <td>{membresia.tipo}</td>
+                    <td>{membresia.fecha_inicio}</td>
+                    <td>{membresia.fecha_fin}</td>
+                    <td>
+                      <span className={`chip ${CLASES_ESTADO[membresia.estado] || ''}`}>
+                        {membresia.estado}
+                      </span>
+                    </td>
+                    {puedeGestionar && (
+                      <td>
+                        <button
+                          type="button"
+                          className="boton-mini"
+                          onClick={() => setRenovando(membresia)}
+                        >
+                          Renovar
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+                {datos.membresias.length === 0 && (
+                  <tr>
+                    <td colSpan={puedeGestionar ? 6 : 5}>
+                      No hay membresías registradas.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {renovando && (
+          <ModalConfirmacion
+            titulo="Renovar membresía"
+            mensaje={`Se extenderá la vigencia de la membresía ${renovando.id_membresia} (${renovando.tipo}) sumando la duración del tipo elegido. ¿Continuar?`}
+            alConfirmar={confirmarRenovacion}
+            alCancelar={() => setRenovando(null)}
+          />
+        )}
+      </div>
     </main>
   );
 }

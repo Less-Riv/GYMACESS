@@ -1,5 +1,7 @@
 // Modal de confirmación para acciones sensibles (T024; principio XI de
 // docs/reglas.md: confirmar antes de acciones que modifican información).
+// La lógica no cambia (cierre con Escape y callbacks); solo se rediseña la
+// presentación con el tema oscuro compartido.
 import { useEffect } from 'react';
 
 export default function ModalConfirmacion({
@@ -21,32 +23,23 @@ export default function ModalConfirmacion({
 
   return (
     <div
+      className="modal-fondo"
       role="dialog"
       aria-modal="true"
       aria-label={titulo}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-      }}
       onClick={alCancelar}
     >
       <div
-        className="tarjeta"
-        style={{ maxWidth: 420, margin: '1rem' }}
+        className="tarjeta-oscura modal-caja"
         onClick={(evento) => evento.stopPropagation()}
       >
         <h2>{titulo}</h2>
-        <p>{mensaje}</p>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-          <button type="button" onClick={alConfirmar}>
+        <p className="modal-mensaje">{mensaje}</p>
+        <div className="modal-acciones">
+          <button type="button" className="boton-primario" onClick={alConfirmar}>
             {textoConfirmar}
           </button>
-          <button type="button" onClick={alCancelar}>
+          <button type="button" className="boton-secundario" onClick={alCancelar}>
             {textoCancelar}
           </button>
         </div>

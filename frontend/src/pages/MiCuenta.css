@@ -1,0 +1,6 @@
+/* Layout de la pantalla "Mi cuenta" (tema oscuro). Encabezado, tarjetas,
+   tablas, chips, datos y estados vacíos vienen de src/styles/tema.css;
+   aquí va solo el ancho angosto de la página (como en su versión original
+   de 720px, un poco más holgado para las tablas de cuatro columnas). */
+
+.pagina-mi-cuenta .contenido-pagina { max-width: 860px; }
