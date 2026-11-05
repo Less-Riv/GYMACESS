@@ -115,16 +115,16 @@ La tabla `auditoria` se utilizará de acuerdo con las reglas establecidas en `do
 
 * Solo el administrador puede generar, consultar y exportar reportes.
 * Los reportes son de solo lectura y no modifican ningún dato.
-* Los reportes de pagos, accesos y membresías deben poder filtrarse por periodo.
+* Los reportes de clientes, pagos, accesos y membresías deben poder filtrarse por periodo.
 * Los listados de un reporte deben estar paginados.
-* La exportación debe reflejar exactamente los mismos datos y filtros que el reporte mostrado en pantalla.
+* La exportación debe reflejar exactamente los mismos datos y filtros que el reporte mostrado en pantalla. Si el conjunto filtrado excede el límite de filas exportables, la exportación se limita y el administrador recibe el aviso explícito de que el archivo contiene solo una parte del conjunto.
 * Los reportes no deben incluir contraseñas, tokens ni datos biométricos.
-* El adeudo se calcula como el precio del tipo de membresía menos la suma de pagos, igual que en el Sprint 2.
+* El adeudo se calcula como el precio del tipo de la última membresía registrada del cliente menos la suma de sus pagos completados, igual que en el Sprint 2, y el reporte muestra el estado de esa membresía.
 * Los pagos y los accesos son historial y no se modifican ni se eliminan desde los reportes.
 * Si no hay datos para el filtro elegido, el reporte debe mostrar un resultado vacío con un mensaje claro y no un error.
 * La generación y la exportación de un reporte deben quedar registradas en la auditoría.
 
-> Estas reglas continúan la numeración del proyecto como **RN-25 a RN-34** al incorporarse a `docs/project-context.md`.
+> Estas reglas continúan la numeración del proyecto como **RN-25 a RN-34** y ya están incorporadas a `docs/project-context.md` §12.
 
 ## 7. Criterios de aceptación
 

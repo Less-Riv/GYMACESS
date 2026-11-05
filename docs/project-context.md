@@ -528,6 +528,105 @@ Un cliente solamente puede consultar su propia información.
 
 ---
 
+## RN-15 - Entrenadores
+
+Un entrenador DEBE estar asociado a una cuenta de usuario del sistema válida, activa y con rol
+entrenador; una cuenta no puede pertenecer a dos entrenadores.
+
+## RN-16 - Asignación de entrenador
+
+Un cliente DEBE tener como máximo un entrenador principal en su periodo activo de seguimiento; la
+reasignación cierra la asignación anterior con fecha y conserva el histórico.
+
+## RN-17 - Histórico de entrenamiento
+
+Las asignaciones, los objetivos y los progresos DEBEN conservarse históricamente para poder evaluar
+la evolución y el cumplimiento; no se modifican ni se eliminan de manera ordinaria.
+
+## RN-18 - Rutinas de entrenamiento
+
+Toda rutina DEBE estar asociada a un cliente y a un entrenador válidos e incluir ejercicios con
+series, repeticiones o instrucciones específicas.
+
+## RN-19 - Alcance del entrenador
+
+Un entrenador solo DEBE gestionar los clientes asignados a su carga.
+
+## RN-20 - Alcance del recepcionista
+
+El recepcionista puede consultar la asignación y el estado general del personal, pero NO puede
+editar rutinas ni objetivos ni progresos.
+
+## RN-21 - Registro de seguimiento
+
+El entrenador responsable es quien registra los objetivos y los progresos de sus clientes asignados.
+
+## RN-22 - Vista propia del cliente
+
+Un cliente solo DEBE poder consultar su propia rutina y su propio progreso.
+
+## RN-23 - Dashboard administrativo
+
+El dashboard DEBE mostrar información resumida y segura, filtrada por rol y permisos del usuario
+autenticado, y su alcance completo corresponde al administrador.
+
+## RN-24 - Uso de la información de entrenamiento
+
+La información de entrenamiento solo DEBE utilizarse para el seguimiento del cliente y el apoyo
+operativo del gimnasio, sin exponer datos sensibles de clientes no autorizados.
+
+## RN-25 - Acceso a los reportes
+
+Solo el administrador puede generar, consultar y exportar reportes.
+
+## RN-26 - Reportes de solo lectura
+
+Los reportes son de solo lectura y no modifican ningún dato de clientes, membresías, pagos ni
+accesos.
+
+## RN-27 - Filtro por periodo
+
+Los reportes de clientes, pagos, accesos y membresías DEBEN poder filtrarse por un periodo definido
+por una fecha inicial y una fecha final.
+
+## RN-28 - Paginación de los listados
+
+Los listados de un reporte DEBEN aparecer paginados y la paginación DEBE permitir recorrer la
+totalidad de los registros del filtro sin omitir ni duplicar filas.
+
+## RN-29 - Fidelidad de la exportación
+
+La exportación DEBE reflejar exactamente los mismos datos y filtros que el reporte mostrado en
+pantalla. Si el conjunto filtrado excede el límite de filas exportables, la exportación se limita y
+el administrador recibe el aviso explícito de que el archivo contiene solo una parte del conjunto.
+
+## RN-30 - Datos sensibles en los reportes
+
+Los reportes NO DEBEN incluir contraseñas, tokens ni datos biométricos, ni en sus respuestas ni en
+sus archivos exportados.
+
+## RN-31 - Cálculo del adeudo
+
+El adeudo de un cliente se calcula como el precio del tipo de su última membresía registrada menos
+la suma de sus pagos completados; el saldo pendiente nunca es negativo. El reporte muestra el estado
+de esa membresía.
+
+## RN-32 - Historial de pagos y accesos
+
+Los pagos y los accesos son historial y no se modifican ni se eliminan desde los reportes.
+
+## RN-33 - Resultado vacío
+
+Si no hay datos para el filtro elegido, el reporte DEBE mostrar un resultado vacío con un mensaje
+claro y NO DEBE devolver un error.
+
+## RN-34 - Auditoría de los reportes
+
+La generación y la exportación de un reporte DEBEN quedar registradas en la auditoría con el
+usuario, el módulo, la fecha, el resultado y la descripción.
+
+---
+
 # 13. Historias de usuario generales
 
 ## Autenticación
@@ -778,7 +877,7 @@ usuarios
 
 # 16. Sprints del MVP
 
-El MVP se desarrollará en **dos sprints**.
+El MVP se desarrollará en **cuatro sprints**.
 
 ## Sprint 1 - Base del sistema, usuarios y clientes
 
@@ -822,6 +921,46 @@ Implementar la gestión de membresías y pagos, integrar el reconocimiento facia
 * Rechazo de acceso.
 * Registro de accesos.
 * Auditoría.
+
+---
+
+## Sprint 3 - Entrenadores, rutinas y dashboard administrativo
+
+### Objetivo
+
+Permitir el seguimiento del entrenamiento de los clientes con Assignment de entrenador, rutinas de
+entrenamiento, objetivos, progresos y dashboard administrativo.
+
+### Funcionalidades principales
+
+* Registro de entrenadores.
+* Asignación y reasignación de entrenador a cliente.
+* Creación y modificación de rutinas con ejercicios.
+* Registro de objetivos y de progresos del cliente.
+* Vista propia del cliente sobre su entrenamiento.
+* Consulta de la carga del personal.
+* Dashboard administrativo con indicadores agregados.
+
+---
+
+## Sprint 4 - Reportes básicos y cierre del MVP
+
+### Objetivo
+
+Completar el MVP con los reportes básicos del administrador y cerrar la verificación de los cuatro
+sprints.
+
+### Funcionalidades principales
+
+* Reporte de clientes con totales por estado.
+* Reporte de membresías con cuatro grupos disjuntos.
+* Reporte de pagos e ingresos por periodo.
+* Reporte de adeudos pendientes por cliente.
+* Reporte de accesos autorizados y rechazados.
+* Filtros por periodo y por estado, con listados paginados.
+* Exportación de cada reporte a archivo PDF.
+* Auditoría de la generación y de la exportación.
+* Verificación y documentación del MVP completo.
 
 ---
 

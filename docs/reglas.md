@@ -2,22 +2,25 @@
 
 Reporte de Impacto de la Sincronización
 
-- Cambio de versión: 1.0.0 → 1.1.0
+- Cambio de versión: 1.1.0 → 1.2.0
 
-- Cambio principal: la base de datos del MVP pasa de MongoDB a MySQL
-  ejecutado de forma local.
+- Cambio principal: se reconoce el cuarto sprint del MVP (reportes básicos y
+  cierre), aprobado por el equipo el 2026-11-04, y se actualiza el número de
+  sprints del MVP de tres a cuatro.
 
-- Se actualizan los principios III y IV, así como las secciones
-  "Tecnologías y Dependencias", "Flujo de Desarrollo" y
-  "Decisiones Pendientes".
+- Principios modificados: ninguno. Se mantiene el texto de los once
+  principios; solo se actualiza el número de sprints del MVP (Principio I).
 
-- La estructura de información pasa de colecciones a tablas relacionales.
+- Secciones añadidas: Sprint 3 y Sprint 4 en el contexto maestro, y las reglas
+  de negocio RN-15 a RN-34 en la sección 12 de `docs/project-context.md`.
 
-- El MVP mantiene las mismas funcionalidades:
-  usuarios, clientes, membresías, pagos, reconocimiento facial,
-  control de acceso, dashboard y reportes.
+- Secciones eliminadas: ninguna.
 
-- Se mantiene el desarrollo en tres sprints.
+- Elementos pendientes:
+  * La fecha de ratificación del equipo sigue pendiente de confirmar.
+
+- Este reporte es material temporal de revisión y debe eliminarse
+  antes de hacer commit del archivo enmendado.
 
 -->
 
@@ -32,7 +35,7 @@ estado de las membresías, registrar pagos y validar el acceso de los clientes.
 También contará con diferentes roles para limitar el acceso a las funciones
 según las responsabilidades de cada usuario.
 
-El desarrollo del MVP se realizará en tres sprints y utilizará una arquitectura
+El desarrollo del MVP se realizará en cuatro sprints y utilizará una arquitectura
 basada en React, Node.js, Express y MySQL.
 
 El detalle de los requisitos, módulos, entidades, reglas de negocio y sprints
@@ -48,7 +51,7 @@ para el desarrollo.
 * NO se deben agregar funcionalidades que no formen parte del alcance sin
   autorización previa del equipo.
 
-* El desarrollo DEBE realizarse en tres sprints y respetar el orden establecido.
+* El desarrollo DEBE realizarse en cuatro sprints y respetar el orden establecido.
 
 * El MVP DEBE concentrarse en las funciones principales del gimnasio:
   clientes, membresías, pagos, reconocimiento facial, control de acceso,
@@ -514,7 +517,7 @@ aprobadas por el equipo:
 
 * Cualquier desviación DEBE justificarse y ser conocida por el equipo.
 
-**Versión:** 1.1.0
+**Versión:** 1.2.0
 **Redactada:** 2026-10-06
 **Ratificación:** pendiente del equipo
-**Última enmienda:** 2026-10-06
+**Última enmienda:** 2026-11-04
