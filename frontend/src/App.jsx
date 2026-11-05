@@ -16,6 +16,7 @@ import Entrenadores from './pages/Entrenadores.jsx';
 import Rutinas from './pages/Rutinas.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Personal from './pages/Personal.jsx';
+import Reportes from './pages/Reportes.jsx';
 // Estilos del menú de inicio (tema oscuro, mismas variables compartidas).
 import './pages/Inicio.css';
 
@@ -193,6 +194,19 @@ const MODULOS = [
           </svg>
         ),
       },
+      {
+        ruta: '/reportes',
+        nombre: 'Reportes',
+        descripcion: 'Clientes, membresías, pagos, adeudos y accesos.',
+        visible: (rol) => rol === 'administrador',
+        icono: (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 3.5h8l4 4v13H6z" />
+            <path d="M14 3.5v4h4" />
+            <path d="M9 12h6M9 15.5h6" />
+          </svg>
+        ),
+      },
     ],
   },
   {
@@ -321,6 +335,14 @@ export default function App() {
         element={
           <RutaProtegida roles={['administrador']}>
             <Dashboard />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/reportes"
+        element={
+          <RutaProtegida roles={['administrador']}>
+            <Reportes />
           </RutaProtegida>
         }
       />

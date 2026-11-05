@@ -162,3 +162,71 @@ export function obtenerMiEntrenamiento() {
 export function obtenerDashboard(params = '') {
   return pedir(`/dashboard${params}`);
 }
+
+// ---------------------------------------------------------------------------
+// Recursos del Sprint 4 (T004): reportes del administrador y auditoría de
+// reportes. Son envoltorios transparentes sobre `pedir`; las páginas pueden
+// usarlos o llamar a `pedir` directamente con la misma ruta.
+// ---------------------------------------------------------------------------
+
+export function listarReporte(tipo, params = '') {
+  return pedir(`/reportes/${tipo}${params}`);
+}
+
+export function listarAuditoriaReportes(params = '') {
+  return pedir(`/auditoria?modulo=reportes${params}`);
+}
+
+// Descarga del reporte exportado (US-S4-05): la respuesta es un archivo PDF,
+// no JSON, así que se pide el blob y se entrega con el nombre de archivo que
+// indica el backend. Los errores sí llegan en JSON y se tratan igual que en
+// `pedir`, para que la pantalla muestre el mensaje del backend.
+export async function descargarReporte(tipo, params = '') {
+  const token = obtenerToken();
+  const encabezados = {};
+  if (token) {
+    encabezados.Authorization = `Bearer ${token}`;
+  }
+
+  let respuesta;
+  try {
+    respuesta = await fetch(`/api/reportes/${tipo}/exportar${params}`, {
+      method: 'GET',
+      headers: encabezados,
+    });
+  } catch (_error) {
+    throw new ErrorApi('No se pudo conectar con el servidor', 0, 'RED');
+  }
+
+  if (respuesta.status === 401) {
+    borrarSesion();
+    if (alCerrarSesion) alCerrarSesion();
+  }
+
+  if (!respuesta.ok) {
+    let datos = null;
+    try {
+      datos = await respuesta.json();
+    } catch (_error) {
+      datos = null;
+    }
+    throw new ErrorApi(
+      datos?.mensaje || 'No se pudo exportar el reporte',
+      respuesta.status,
+      datos?.codigo
+    );
+  }
+
+  const blob = await respuesta.blob();
+  const contenido = respuesta.headers.get('Content-Disposition') || '';
+  const encontrado = /filename="?([^";]+)"?/.exec(contenido);
+  const nombre = encontrado ? encontrado[1] : `reporte-${tipo}.pdf`;
+
+  return {
+    blob,
+    nombre,
+    truncado: respuesta.headers.get('X-Reporte-Truncado') === 'true',
+    totalFilas: Number(respuesta.headers.get('X-Reporte-Total-Filas') || 0),
+    filasExportadas: Number(respuesta.headers.get('X-Reporte-Filas-Exportadas') || 0),
+  };
+}
