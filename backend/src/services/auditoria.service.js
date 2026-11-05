@@ -3,6 +3,14 @@
 // membresías, registro de pagos, registro de información facial y resultados
 // del control de acceso.
 //
+// Sprint 4: los reportes añaden dos acciones más, `generar_reporte` y
+// `exportar_reporte`, siempre con el módulo `reportes`. La descripción lleva
+// el tipo de reporte y los filtros aplicados en el formato compacto
+// `tipo=<tipo>; desde=<fecha>; hasta=<fecha>; estado=<valor>; pagina=<n>`
+// (research.md §D6). Un intento denegado por permisos se registra con
+// resultado `rechazado`; una petición sin token no se registra porque no hay
+// usuario al que atribuirla.
+//
 // SEGURIDAD (research.md §6): las descripciones NUNCA contienen datos
 // biométricos (ni descriptores ni medidas faciales); solo identificadores y
 // resultados.

@@ -22,6 +22,7 @@ import { rutasMiEntrenamiento } from './routes/mi-entrenamiento.routes.js';
 import { rutasDashboard } from './routes/dashboard.routes.js';
 import { rutasPersonal } from './routes/personal.routes.js';
 import { rutasAuditoria } from './routes/auditoria.routes.js';
+import { rutasReportes } from './routes/reportes.routes.js';
 
 export function crearApp() {
   const app = express();
@@ -58,6 +59,8 @@ export function crearApp() {
   app.use('/api/personal', rutasPersonal);
   // Auditoría (FR-020; contrato del Sprint 2, endpoint completado en T063).
   app.use('/api/auditoria', rutasAuditoria);
+  // Sprint 4: reportes del administrador (US-S4-01 a US-S4-06).
+  app.use('/api/reportes', rutasReportes);
 
   // Ruta no encontrada → 404 con envelope consistente.
   app.use((_req, res) => {

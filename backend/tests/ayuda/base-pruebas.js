@@ -162,6 +162,13 @@ export async function prepararBasePruebas() {
       'utf8'
     );
     await conexion.query(semillaSprint3);
+
+    // Semilla de datos del Sprint 4 (datos representativos para los reportes).
+    const semillaSprint4 = await readFile(
+      path.join(RAIZ, 'database', 'seeds', 'seed-datos-sprint4.sql'),
+      'utf8'
+    );
+    await conexion.query(semillaSprint4);
   } catch (error) {
     // Algún archivo impidió recrear la base: no retener el turno.
     await liberarBloqueo();
