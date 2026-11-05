@@ -2,7 +2,7 @@
 
 Reporte de Impacto de la Sincronización
 
-- Cambio de versión: sin versión (plantilla base) → 1.1.0.
+- Cambio de versión: 1.1.0 → 1.2.0 (cuarto sprint del MVP).
   Se adopta sin modificaciones el contenido de docs/reglas.md, que
   ya declara la versión 1.1.0 tras su enmienda 1.0.0 → 1.1.0
   (cambio de MongoDB a MySQL local).
@@ -40,7 +40,7 @@ estado de las membresías, registrar pagos y validar el acceso de los clientes.
 También contará con diferentes roles para limitar el acceso a las funciones
 según las responsabilidades de cada usuario.
 
-El desarrollo del MVP se realizará en tres sprints y utilizará una arquitectura
+El desarrollo del MVP se realizará en cuatro sprints y utilizará una arquitectura
 basada en React, Node.js, Express y MySQL.
 
 El detalle de los requisitos, módulos, entidades, reglas de negocio y sprints
@@ -56,7 +56,7 @@ para el desarrollo.
 * NO se deben agregar funcionalidades que no formen parte del alcance sin
   autorización previa del equipo.
 
-* El desarrollo DEBE realizarse en tres sprints y respetar el orden establecido.
+* El desarrollo DEBE realizarse en cuatro sprints y respetar el orden establecido.
 
 * El MVP DEBE concentrarse en las funciones principales del gimnasio:
   clientes, membresías, pagos, reconocimiento facial, control de acceso,
@@ -522,7 +522,7 @@ aprobadas por el equipo:
 
 * Cualquier desviación DEBE justificarse y ser conocida por el equipo.
 
-**Versión:** 1.1.0
+**Versión:** 1.2.0
 **Redactada:** 2026-10-06
 **Ratificación:** TODO(RATIFICATION_DATE): el equipo aún no confirma la fecha de adopción
-**Última enmienda:** 2026-10-08
+**Última enmienda:** 2026-11-04

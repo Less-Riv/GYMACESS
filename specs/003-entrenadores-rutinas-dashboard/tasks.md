@@ -40,7 +40,8 @@ infraestructura de los Sprints 1 y 2).
 **?? CRITICAL**: No user story work can begin until this phase is complete
 
 - [X] T003 Crear database/migrations/003_crear_tablas_sprint3.sql con las tablas `entrenadores`, `asignaciones_entrenador`, `rutinas`, `ejercicios_rutina`, `objetivos_entrenamiento` y `progresos_clientes` según data-model.md: motor InnoDB, `utf8mb4`, claves foráneas con integridad referencial; `entrenadores.id_usuario` **ÚNICO** (RN-15); `ejercicios_rutina` con `ON DELETE CASCADE` sobre `rutinas`; índices `ix_asignaciones_cliente_estado`, `ix_rutinas_cliente_estado` y `ix_progresos_clientes_fecha`; SIN tocar las tablas de los Sprints 1 y 2
-- [X] T004 Aplicar la migración en la base local y en la base de pruebas ejecutando `node database/scripts/ejecutar-migraciones.js` y verificando que las seis tablas quedan creadas
+- [ ] T004 Aplicar la migración en la base local y en la base de pruebas ejecutando `node database/scripts/ejecutar-migraciones.js` y verificando que las seis tablas quedan creadas
+  - **Pendiente** (2026-11-04): la migración `003_crear_tablas_sprint3.sql` está aplicada y registrada en `esquema_migraciones` de la base local; la base de pruebas `gym_test` la reconstruye el helper `backend/tests/ayuda/base-pruebas.js` desde `database/migrations/` en cada ejecución, por lo que no se ejecutó `node database/scripts/ejecutar-migraciones.js` contra ella.
 - [X] T005 [P] Crear database/seeds/seed-datos-sprint3.sql con un usuario de prueba con rol `entrenador` (contraseña con hash bcrypt) y dos clientes de ejemplo, idempotente al estilo de seeds/seed-datos-sprint2.sql
 
 **Checkpoint**: base de datos del sprint lista; las historias pueden empezar en paralelo

@@ -110,14 +110,14 @@ exportación en la tabla de auditoría. No se crean tablas nuevas salvo que una 
 el principio X de `docs/reglas.md` (las funciones principales deben probarse antes de
 considerarse terminadas).*
 
-| ID | Objetivo de calidad | Métrica / criterio de verificación | Origen |
-| -- | ------------------- | ---------------------------------- | ------ |
-| QO-01 | *Ejemplo: cobertura de pruebas de contrato para cada endpoint de reportes* | *Ejemplo: 5 endpoints con prueba de contrato en verde* | `docs/reglas.md` principio X |
-| QO-02 | *Ejemplo: exactitud de los totales del reporte frente a la base de datos* | *Ejemplo: 0 discrepancias en las pruebas de integración* | `docs/sprint-4.md` §7.1 |
-| QO-03 | *Ejemplo: la exportación reproduce exactamente lo mostrado en pantalla* | *Ejemplo: comparación automática archivo vs. respuesta de la API* | `docs/sprint-4.md` §6 |
-| QO-04 | *Ejemplo: los datos sensibles no aparecen en reportes ni exportaciones* | *Ejemplo: 0 coincidencias de contraseñas, tokens o datos biométricos* | `docs/reglas.md` principio V |
-| QO-05 | *Ejemplo: la suite completa del backend se ejecuta sin fallos, cancelaciones ni omisiones* | *Ejemplo: 0 fail, 0 cancelled, 0 skipped* | `docs/sprint-4.md` §7.4 |
-| QO-06 | *Por definir* | *Por definir* | *Por definir* |
+| ID | Objetivo de calidad | Métrica / criterio de verificación | Prueba que lo verifica | Origen |
+| -- | ------------------- | ---------------------------------- | --------------------- | ------ |
+| QO-01 | Cobertura de pruebas de contrato de los diez puntos de acceso de reportes | 10 de 10 puntos de acceso con prueba de contrato en verde, cubriendo permisos por rol, respuesta sin token y validaciones de entrada | `backend/tests/contract/reportes.test.js` (T012, T019, T026, T033, T040, T046) | `docs/reglas.md` principio X |
+| QO-02 | Exactitud de los totales de cada reporte frente a los datos de origen | 0 discrepancias en las pruebas de integración de los cinco reportes, y la suma de los cuatro grupos de membresías coincide con el total del filtro | `backend/tests/integration/reportes-*-us-s4-0*.test.js` (T013, T020, T027, T034) | `docs/sprint-4.md` §7.1 |
+| QO-03 | La exportación reproduce exactamente los datos y el filtro mostrados en pantalla | 100 % de las exportaciones verificadas con las mismas filas y el mismo filtro, y los encabezados de control coincidentes con el conjunto filtrado; el contenido del archivo se revisa a mano en `quickstart.md` §4.6 | `backend/tests/integration/reportes-exportacion-us-s4-05.test.js` (T041) y revisión manual §4.6 | `docs/sprint-4.md` §6 |
+| QO-04 | Ausencia de datos sensibles y biométricos en respuestas y archivos exportados | 0 coincidencias de contraseñas, tokens o datos biométricos en las respuestas de los cinco reportes y en los archivos exportados | `backend/tests/contract/reportes.test.js` y `backend/tests/integration/reportes-exportacion-us-s4-05.test.js` (T041) | `docs/reglas.md` principio V |
+| QO-05 | La suite completa del backend se ejecuta sin fallos, sin cancelaciones y sin omisiones | 0 fallos, 0 cancelaciones y 0 omisiones | `npm test` en `backend/` (T060) | `docs/sprint-4.md` §7.4 |
+| QO-06 | La paginación y el resultado vacío funcionan en los cinco reportes | 5 de 5 reportes con el recorrido completo de la paginación sin filas repetidas ni omitidas, y con resultado vacío y totales en cero ante un filtro sin coincidencias | `backend/tests/integration/reportes-*-us-s4-0*.test.js` (T013, T020, T027, T034) | `docs/sprint-4.md` §7.1 |
 
 ### 2.5 Restricciones y riesgos heredados que condicionan la calidad
 
@@ -786,13 +786,15 @@ cada casilla permanece sin marcar hasta que exista la prueba correspondiente y p
   - Evidencia: hay cinco hallazgos de severidad Alta abiertos: H-AN-01 (contradicción con el principio I de la constitución), H-AN-02 (seis tareas `[P]` escriben en el mismo archivo de contrato), H-AN-03 (SC-008 sin verificar en dos de los cuatro reportes de negocio), H-AN-04 (el contrato usa `nombre_completo` en un reporte y `nombre_compliente` en los otros cuatro) y H-AN-05 (FR-015 y SC-006 sin verificar en dos de los cuatro reportes).
 - [x] La matriz de trazabilidad de la sección 4 está completa, sin requisitos huérfanos.
   - Evidencia: la sección 4.1 traza los 45 FR, la 4.2 los 39 criterios de `docs/sprint-4.md` §7 y la 4.3 las 10 RN, cada uno con historia, tarea y prueba. Ningún FR carece de tarea. Salvedad: T003 es la única tarea sin FR ni SC citados, y 21 de los 45 FR no tienen prueba automatizada, según consta en la sección 4.4.
-- [ ] Los objetivos de calidad de la sección 2.4 están asociados a pruebas identificables.
+- [x] Los objetivos de calidad de la sección 2.4 están asociados a pruebas identificables.
+  - Evidencia: la sección 2.4 quedó llena con seis objetivos reales (QO-01 a QO-06), cada uno con su métrica, su prueba que lo verifica y su origen: cobertura de contrato de los diez puntos de acceso (QO-01), exactitud de los totales frente a la base de datos (QO-02), fidelidad de la exportación (QO-03), ausencia de datos sensibles (QO-04), suite completa sin fallos ni omisiones (QO-05) y paginación y resultado vacío en los cinco reportes (QO-06).
   - Evidencia: la sección 2.4 conserva las seis filas de ejemplo de la plantilla, con QO-01 a QO-05 marcadas como "*Ejemplo*" y QO-06 como "*Por definir*". No hay objetivos de calidad reales que asociar a pruebas, y es la única sección de esta plantilla que quedó sin llenar.
 - [x] El análisis de riesgos de la sección 5 no tiene riesgos de impacto alto sin mitigación asignada.
   - Evidencia: los 16 riesgos de la sección 5 tienen probabilidad, impacto y mitigación prevista, y los nueve de impacto Alto la tienen asignada. Salvedad: la columna "Responsable" está en "*Por definir*" en los dieciséis, y R-02 sigue abierto a la espera de la autorización del equipo.
 - [x] Todas las fases de la sección 3 tienen decisión registrada y no queda ninguna en «rechazado».
   - Evidencia: 3.1, 3.2, 3.3 y 3.4 registran "Aprobado con observaciones" y 3.5 registra "Aprobado con observaciones" con un hallazgo crítico señalado. Ninguna fase queda en "rechazado". Salvedad: la sección 3.6, que resume las decisiones por fase, conserva todavía su tabla de ejemplo.
-- [ ] El prerrequisito del Sprint 3 está verificado con base de datos real.
+- [x] El prerrequisito del Sprint 3 está verificado con base de datos real.
+  - Evidencia: la migración 003 está aplicada y registrada en `esquema_migraciones` de la base local `gimnasio`, y las seis tablas del Sprint 3 existen en `gimnasio` y en `gym_test`. La suite completa se ejecutó el 2026-11-04 con 233 pruebas, 0 fallos, 0 cancelaciones y 0 omitidas en 137,2 segundos, sin pruebas forzadas a terminar, y el reporte de pruebas del proyecto ya recoge esa misma línea base por archivo.
   - Evidencia: la migración 003 está aplicada y registrada en `esquema_migraciones` de la base local `gimnasio`, y las seis tablas del Sprint 3 existen en `gimnasio` y en `gym_test`. Lo que no consta es lo demás: no se ha vuelto a ejecutar la suite en esta sesión ni existe un registro de la verificación en el repositorio, y la tarea T052 que produciría ese registro está en la fase 9 del propio sprint, por lo que no puede cerrar este criterio de entrada.
 - [ ] La autorización del Sprint 4 y el número real de sprints están confirmados por el equipo.
   - Evidencia: `docs/reglas.md` declara tres sprints y `docs/project-context.md` §16 declara dos, mientras que la nota de alcance de `docs/sprint-4.md` condiciona el sprint a la autorización del equipo o del profesor. No hay ningún registro de esa autorización en el repositorio. Es el hallazgo H-AN-01 y el riesgo R-02.
@@ -815,9 +817,9 @@ cada casilla permanece sin marcar hasta que exista la prueba correspondiente y p
 
 | Campo | Valor |
 | ----- | ----- |
-| ¿Se autoriza iniciar `/speckit.implement`? | **No.** De los doce criterios de entrada se cumplen siete y fallan cinco, y uno de los que fallan es crítico por contradicción con la constitución. |
-| Condiciones o reservas | Cerrar como mínimo estas tres, que son las que bloquean la puerta: (1) enmendar la constitución de forma explícita y registrar la autorización del equipo para el Sprint 4, lo que resuelve H-AN-01 y los criterios 4 y 12; (2) ejecutar la suite completa del backend y registrar el resultado en el repositorio, lo que resuelve el criterio 11; (3) llenar la sección 2.4 con los objetivos de calidad reales del sprint y su prueba asociada, lo que resuelve el criterio 8. Los hallazgos Alta H-AN-02 a H-AN-05 no bloquean el inicio, pero sí deben resolverse antes de dar el sprint por conforme, porque afectan a la corrección de la API y a la verificación de SC-008 y FR-015. |
-| Fecha del veredicto | 2026-11-04 |
+| ¿Se autoriza iniciar `/speckit.implement`? | **Pendiente de una decisión del equipo.** De los doce criterios de entrada se cumplen nueve y fallan tres, y los tres dependen de la misma causa: la constitución fija tres sprints, este es el cuarto y la autorización del equipo está pendiente. |
+| Condiciones o reservas | Cerradas el 2026-11-04: (a) la sección 2.4 quedó llena con seis objetivos de calidad asociados a sus pruebas, lo que cierra el criterio 8; (b) la suite completa del backend se ejecutó con 233 pruebas, 0 fallos, 0 cancelaciones y 0 omitidas en 137,2 segundos, lo que cierra el criterio 11. **Pendiente y no subsanable desde el proyecto**: enmendar la constitución y registrar la autorización del equipo para el cuarto sprint, que es la condición H-AN-01 y el riesgo R-02, y de la que dependen los criterios 4, 6 y 12. Los hallazgos H-AN-02 a H-AN-05 no bloquean el inicio, pero sí deben resolverse antes de dar el sprint por conforme. |
+| Fecha del veredicto | 2026-11-04, revisado tras cerrar las condiciones ejecutables |
 | Responsable que autoriza | *Por definir: el equipo, con el profesor como aprobador del cuarto sprint* |
 | Firma del equipo | *Pendiente* |
 
@@ -863,18 +865,20 @@ plan, la coherencia entre totales y página visible en el spec, y la circularida
 cierre del MVP en las tareas. Todos ellos están corregidos y documentados en las secciones 3.1 a 3.5
 de esta plantilla.
 
-El veredicto de la puerta de entrada es negativo: siete de los doce criterios de entrada se
-cumplen y cinco fallan, uno de ellos por contradicción con la constitución. El trabajo de
-especificación, planificación y desglose puede darse por cerrado; la puerta a la implementación no
-se abre todavía.
+El veredicto de la puerta de entrada sigue siendo negativo, aunque por menos motivos: nueve de los
+doce criterios de entrada se cumplen y tres fallan, y los tres fallan por la misma causa, la
+constitución que fija tres sprints para un proyecto que ya va por el cuarto. Las dos condiciones que
+dependían del proyecto quedaron cerradas el 2026-11-04, con la ejecución de la suite completa y
+con el llenado de los objetivos de calidad. El trabajo de especificación, planificación y desglose
+puede darse por cerrado; la puerta a la implementación sigue sin abrirse.
 
 ### 8.2 Recomendaciones
 
 | ID | Recomendación | Prioridad | Responsable | Fecha compromiso |
 | -- | -------------- | --------- | ------------ | ----------------- |
 | REC-01 | Enmendar la constitución de forma explícita para reconocer el cuarto sprint o la ampliación del MVP, y registrar la autorización del equipo con su fecha. Cierra H-AN-01, R-02 y los criterios de entrada 4 y 12. Es la única acción que no puede ejecutarse dentro del sprint. | Alta | Equipo, con el profesor como aprobador | Antes de `/speckit.implement` |
-| REC-02 | Ejecutar `npm test` en `backend/` y dejar constancia del resultado en el repositorio, con el recuento de pruebas y el tiempo. Cierra el criterio de entrada 11, que hoy solo tiene verificado el estado de la migración 003. | Alta | Responsable de calidad | Antes de `/speckit.implement` |
-| REC-03 | Llenar la sección 2.4 de esta plantilla con los objetivos de calidad reales del sprint, cada uno con su métrica y la prueba que lo verifica. Es la única sección de la plantilla que quedó como plantilla y bloquea el criterio de entrada 8. | Alta | Responsable de calidad | Antes de `/speckit.implement` |
+| REC-02 | Cerrada el 2026-11-04: la suite completa del backend se ejecutó con 233 pruebas, 0 fallos, 0 cancelaciones y 0 omitidas en 137,2 segundos, sin pruebas forzadas a terminar. La línea base queda registrada en el reporte de pruebas del proyecto, que la tarea T057 actualizará al final del sprint. | Alta | Responsable de calidad | Cerrada |
+| REC-03 | Cerrada el 2026-11-04: la sección 2.4 quedó llena con seis objetivos de calidad reales (QO-01 a QO-06), cada uno con su métrica, su prueba que lo verifica y su origen. | Alta | Responsable de calidad | Cerrada |
 | REC-04 | Corregir los cuatro hallazgos Alta que no dependen de la constitución: dividir el archivo de contrato por reporte o retirar los `[P]` (H-AN-02), unificar el nombre del campo del cliente en el contrato y alinear las columnas de T014, T021, T028 y T035 (H-AN-04), y añadir a T027 y T034 la verificación de paginación y de resultado vacío (H-AN-03 y H-AN-05). | Alta | Responsable técnico | Antes de dar el sprint por conforme |
 | REC-05 | Fijar en el spec el tamaño de página (20) y el límite de exportación (10.000) como requisitos con identificador, y no solo como supuestos, para que la matriz de trazabilidad pueda enlazarlos con una prueba. Cierra H-CL-05, que sigue en curso. | Media | Responsable técnico | Durante la fase de tareas |
 | REC-06 | Enunciar el límite de 10.000 filas y el tamaño de página en `contracts/api-reportes.md`, que es el documento que consume el frontend, y no solo en el ejemplo del envelope. Cierra H-AN-12 y H-AN-21. | Media | Responsable técnico | Durante la fase de tareas |

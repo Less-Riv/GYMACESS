@@ -13,7 +13,7 @@
 | **Funcionalidad evaluada** | Reportes básicos (US-G17 del MVP) |
 | **Sprint** | 4 |
 | **Fecha del informe** | 2026-11-04 |
-| **Veredicto** | **No se autoriza iniciar la implementación.** De los doce criterios de entrada se cumplen siete y fallan cinco, uno de ellos por contradicción con la constitución del proyecto |
+| **Veredicto** | **Pendiente de una decisión del equipo.** De los doce criterios de entrada se cumplen nueve y fallan tres, y los tres fallan por la misma causa: la constitución fija tres sprints, este es el cuarto y la autorización del equipo está pendiente. |
 
 **Integrantes**
 
@@ -79,11 +79,13 @@ declaraciones que se añadieron al plan y una prueba circular que se corrigió),
 41 siguen abiertos. El proceso también detectó seis defectos reales en los artefactos del propio
 sprint y los corrigió sobre la marcha.
 
-**La puerta de entrada no se abre.** De los doce criterios de entrada se cumplen siete y fallan
-cinco: la constitución y la autorización del equipo, la verificación registrada del Sprint 3, los
-objetivos de calidad de la plantilla, que siguen sin llenar, y la coherencia del plan y del
-análisis con la constitución. Cierre de este informe, con doce recomendaciones y tres condiciones
-bloqueantes, se encuentra en el capítulo 7.
+**La puerta de entrada sigue sin abrirse, pero por un solo motivo.** De los doce criterios de
+entrada se cumplen nueve y fallan tres. Las dos condiciones que dependían del proyecto se
+cerraron el 2026-11-04: la suite completa del backend se ejecutó con 233 pruebas, 0 fallos,
+0 cancelaciones y 0 omitidas, y la sección de objetivos de calidad quedó llena con seis
+objetivos asociados a sus pruebas. Los tres criterios que fallan dependen de una sola decisión
+del equipo: enmendar la constitución y registrar la autorización del cuarto sprint. Cierre de
+este informe, con doce recomendaciones, en el capítulo 7.
 
 ---
 
@@ -490,10 +492,12 @@ verificar el Sprint 3 en el plan, la coherencia entre totales y página visible 
 especificación, y la circularidad de la prueba de cierre del MVP en las tareas. Todos están
 corregidos y documentados en el detalle por fases.
 
-El veredicto de la puerta de entrada es negativo: siete de los doce criterios de entrada se
-cumplen y cinco fallan, uno de ellos por contradicción con la constitución. El trabajo de
-especificación, planificación y desglose puede darse por cerrado; la puerta a la implementación no
-se abre todavía.
+El veredicto de la puerta de entrada sigue siendo negativo, aunque por menos motivos: nueve
+de los doce criterios de entrada se cumplen y tres fallan, y los tres fallan por la misma causa,
+la constitución que fija tres sprints para un proyecto que ya va por el cuarto. Las dos condiciones
+que dependían del proyecto quedaron cerradas el 2026-11-04. El trabajo de especificación,
+planificación y desglose puede darse por cerrado; la puerta a la implementación sigue sin
+abrirse.
 
 ### Evaluación por dimensión
 
@@ -514,8 +518,8 @@ se abre todavía.
 | # | Recomendación | Prioridad | Responsable | Cuándo |
 | - | -------------- | --------- | ------------ | ------ |
 | REC-01 | Enmendar la constitución de forma explícita para reconocer el cuarto sprint o la ampliación del MVP, y registrar la autorización del equipo con su fecha. Es la única acción que no puede ejecutarse dentro del sprint. | Alta | Equipo, con el profesor como aprobador | Antes de implementar |
-| REC-02 | Ejecutar la suite completa del backend y dejar constancia del resultado en el repositorio, con el recuento de pruebas y el tiempo. | Alta | Responsable de calidad | Antes de implementar |
-| REC-03 | Llenar la sección 2.4 de la plantilla con los objetivos de calidad reales del sprint, cada uno con su métrica y la prueba que lo verifica. | Alta | Responsable de calidad | Antes de implementar |
+| REC-02 | **Cerrada el 2026-11-04.** La suite completa del backend se ejecutó con 233 pruebas, 0 fallos, 0 cancelaciones y 0 omitidas en 137,2 segundos, sin pruebas forzadas a terminar. La línea base ya figura en el reporte de pruebas del proyecto, que la tarea T057 actualizará al final del sprint. | Alta | Responsable de calidad | Cerrada |
+| REC-03 | **Cerrada el 2026-11-04.** La sección 2.4 quedó llena con seis objetivos de calidad reales (QO-01 a QO-06), cada uno con su métrica, su prueba que lo verifica y su origen. | Alta | Responsable de calidad | Cerrada |
 | REC-04 | Corregir los cuatro hallazgos altos que no dependen de la constitución: dividir el archivo de contrato por reporte o retirar las marcas de paralelismo, unificar el nombre del campo del cliente en el contrato y alinear las columnas de las tareas, y añadir a las dos tareas de integración que faltan la verificación de paginación y de resultado vacío. | Alta | Responsable técnico | Antes de dar el sprint por conforme |
 | REC-05 | Fijar en la especificación el tamaño de página y el límite de exportación como requisitos con identificador, y no solo como supuestos, para que la trazabilidad pueda enlazarlos con una prueba. | Media | Responsable técnico | Durante la fase de tareas |
 | REC-06 | Enunciar el límite de exportación y el tamaño de página en el contrato de la API, que es el documento que consume la pantalla, y no solo en el ejemplo. | Media | Responsable técnico | Durante la fase de tareas |
@@ -530,8 +534,9 @@ se abre todavía.
 
 ## 8. Puerta de entrada a la implementación
 
-**No se autoriza iniciar la implementación.** De los doce criterios de entrada se cumplen siete y
-fallan cinco, y uno de los que fallan es crítico por contradicción con la constitución.
+**Pendiente de una decisión del equipo.** De los doce criterios de entrada se cumplen nueve y
+fallan tres, y los tres fallan por la misma causa: la constitución fija tres sprints, este es
+el cuarto y la autorización del equipo está pendiente.
 
 | Criterio | Resultado |
 | -------- | --------- |
@@ -542,20 +547,20 @@ fallan cinco, y uno de los que fallan es crítico por contradicción con la cons
 | Las tareas cubren las historias y respetan el orden pruebas → implementación | Cumple |
 | El análisis de consistencia no reporta contradicciones graves pendientes | **No cumple** |
 | La matriz de trazabilidad está completa, sin requisitos huérfanos | Cumple |
-| Los objetivos de calidad tienen pruebas identificables asociadas | **No cumple** |
+| Los objetivos de calidad tienen pruebas identificables asociadas | Cumple |
 | Los riesgos de impacto alto tienen mitigación asignada | Cumple |
 | Todas las fases tienen decisión registrada y ninguna en "rechazado" | Cumple |
-| El prerrequisito del Sprint 3 está verificado con base de datos real | **No cumple** |
+| El prerrequisito del Sprint 3 está verificado con base de datos real | Cumple |
 | La autorización del Sprint 4 y el número real de sprints están confirmados | **No cumple** |
 
 **Condiciones para abrir la puerta**
 
 1. Enmendar la constitución y registrar la autorización del equipo para el cuarto sprint. Cierra
-   el hallazgo crítico y los dos criterios de entrada que fallan por esa causa.
-2. Ejecutar la suite completa del backend y registrar el resultado en el repositorio. Cierra el
-   criterio del prerrequisito del Sprint 3.
-3. Llenar la sección de objetivos de calidad de la plantilla con sus pruebas asociadas. Cierra el
-   criterio que depende de esa sección.
+   el hallazgo crítico y los tres criterios de entrada que fallan por esa causa.
+2. ~~Ejecutar la suite completa del backend y registrar el resultado.~~ **Cerrada el 2026-11-04:**
+   233 pruebas, 0 fallos, 0 cancelaciones y 0 omitidas en 137,2 segundos.
+3. ~~Llenar la sección de objetivos de calidad de la plantilla.~~ **Cerrada el 2026-11-04:** seis
+   objetivos de calidad, cada uno con su prueba asociada.
 
 Los cuatro hallazgos altos restantes no bloquean el inicio, pero deben resolverse antes de dar el
 sprint por conforme, porque afectan a la corrección de la API y a la verificación de dos criterios
